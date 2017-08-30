@@ -542,7 +542,7 @@ public class Util
         }
         orderList = sortOrderFiled(orderList);
         StringBuilder orderStr = new StringBuilder();
-        String orderBy = orderList != null || orderList.size() > 0 ? "  order by " : "";
+        String orderBy = (orderList != null && orderList.size() > 0) ? "  order by " : "";
         orderStr.append(orderBy);
         for (Field filed : orderList)
         {
