@@ -535,7 +535,7 @@ public class Util
         String tempAs = asName == null ? "" : asName;
         if (entityClass == null) throw new DataNoMatchException();
         Field[] declaredFields = entityClass.getDeclaredFields();
-        List<Field> orderList = new ArrayList<>(declaredFields.length);
+        List<Field> orderList = new ArrayList<Field>(declaredFields.length);
         for (Field field : declaredFields)
         {
             if (getAnnotation(field, OrderByField.class) != null) orderList.add(field);
