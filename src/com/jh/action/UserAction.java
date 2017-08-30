@@ -24,4 +24,10 @@ public class UserAction
     {
         return matchs;
     }
+    @RequestMapping(value = "MatchCount3")
+    @Json
+    public List<MatchCount> getMatchCount3(@Find List<MatchCount> matchs)
+    {
+        return matchs;
+    }
 }
