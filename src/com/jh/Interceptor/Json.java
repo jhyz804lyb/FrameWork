@@ -12,5 +12,9 @@ import java.lang.annotation.*;
 @Documented
 public @interface Json
 {
+   /**
+    * 如果对象为空时返回的值
+    * @return
+    */
    String value() default "";
 }
