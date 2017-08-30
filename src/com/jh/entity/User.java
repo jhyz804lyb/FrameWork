@@ -1,5 +1,8 @@
 package com.jh.entity;
 
+import com.jh.Interceptor.Save;
+import com.jh.Interceptor.Verify;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -11,17 +14,19 @@ import javax.persistence.Table;
 
 @Entity(name="User")
 @Table(name="User")
+@Verify(classPath="com.jh.entity.User",MethodName="savecheck")
 public class User implements Serializable{
 /**
 	 * 
 	 */
 private static final long serialVersionUID = 1L;
-@Column(name="U_NAME")
-private String username;
-@Column(name="U_PWD")
-private String pwd;
-@Column(name="U_PHONE")
-private String phone;
+
+	@Column(name="U_NAME")
+	private String username;
+	@Column(name="U_PWD")
+	private String pwd;
+	@Column(name="U_PHONE")
+	private String phone;
 @Column(name="U_ID")
 @Id
 @GeneratedValue(strategy=GenerationType.AUTO)
