@@ -1,0 +1,21 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="FrameWork:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/FrameWork_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="FrameWork/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="FrameWork" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="application" name="FrameWorkLib" />
+          <element id="library" level="application" name="javaee1.6" />
+          <element id="library" level="application" name="fastjson-1.1.2" />
+          <element id="library" level="application" name="jackson" />
+        </element>
+      </element>
+      <element id="library" level="application" name="J2EE" />
+      <element id="library" level="application" name="fastjson-1.1.2" />
+    </root>
+  </artifact>
+</component>

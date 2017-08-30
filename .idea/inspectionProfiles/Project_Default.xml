@@ -1,0 +1,183 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0" is_locked="false">
+    <option name="myName" value="Project Default" />
+    <option name="myLocal" value="false" />
+    <inspection_tool class="BadExpressionStatementJS" enabled="true" level="INFO" enabled_by_default="true" />
+    <inspection_tool class="CheckEmptyScriptTag" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ConstantConditions" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
+      <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
+    </inspection_tool>
+    <inspection_tool class="CssUnknownProperty" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myCustomPropertiesEnabled" value="true" />
+      <option name="myIgnoreVendorSpecificProperties" value="false" />
+      <option name="myCustomPropertiesList">
+        <value>
+          <list size="1">
+            <item index="0" class="java.lang.String" itemvalue="filter" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="DebuggerStatementJS" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ELSpecValidationInJSP" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ELValidationInJSP" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="EmptyStatementBody" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="m_reportEmptyBlocks" value="false" />
+    </inspection_tool>
+    <inspection_tool class="EmptyStatementBodyJS" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="m_reportEmptyBlocks" value="false" />
+    </inspection_tool>
+    <inspection_tool class="EqualsWhichDoesntCheckParameterClass" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="HtmlDeprecatedTag" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="HtmlFormInputWithoutLabel" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myValues">
+        <value>
+          <list size="68">
+            <item index="0" class="java.lang.String" itemvalue="type" />
+            <item index="1" class="java.lang.String" itemvalue="wmode" />
+            <item index="2" class="java.lang.String" itemvalue="src" />
+            <item index="3" class="java.lang.String" itemvalue="width" />
+            <item index="4" class="java.lang.String" itemvalue="height" />
+            <item index="5" class="java.lang.String" itemvalue="name" />
+            <item index="6" class="java.lang.String" itemvalue="bind" />
+            <item index="7" class="java.lang.String" itemvalue="action" />
+            <item index="8" class="java.lang.String" itemvalue="target" />
+            <item index="9" class="java.lang.String" itemvalue="datatype" />
+            <item index="10" class="java.lang.String" itemvalue="maxval" />
+            <item index="11" class="java.lang.String" itemvalue="minval" />
+            <item index="12" class="java.lang.String" itemvalue="minlen" />
+            <item index="13" class="java.lang.String" itemvalue="maxlen" />
+            <item index="14" class="java.lang.String" itemvalue="trim" />
+            <item index="15" class="java.lang.String" itemvalue="equal" />
+            <item index="16" class="java.lang.String" itemvalue="filetype" />
+            <item index="17" class="java.lang.String" itemvalue="error" />
+            <item index="18" class="java.lang.String" itemvalue="validator" />
+            <item index="19" class="java.lang.String" itemvalue="range" />
+            <item index="20" class="java.lang.String" itemvalue="ondrag" />
+            <item index="21" class="java.lang.String" itemvalue="ondrop" />
+            <item index="22" class="java.lang.String" itemvalue="onactive" />
+            <item index="23" class="java.lang.String" itemvalue="editable" />
+            <item index="24" class="java.lang.String" itemvalue="value" />
+            <item index="25" class="java.lang.String" itemvalue="report" />
+            <item index="26" class="java.lang.String" itemvalue="display" />
+            <item index="27" class="java.lang.String" itemvalue="sql" />
+            <item index="28" class="java.lang.String" itemvalue="oql" />
+            <item index="29" class="java.lang.String" itemvalue="database" />
+            <item index="30" class="java.lang.String" itemvalue="native" />
+            <item index="31" class="java.lang.String" itemvalue="id" />
+            <item index="32" class="java.lang.String" itemvalue="redirect" />
+            <item index="33" class="java.lang.String" itemvalue="pagesize" />
+            <item index="34" class="java.lang.String" itemvalue="pageno" />
+            <item index="35" class="java.lang.String" itemvalue="validate" />
+            <item index="36" class="java.lang.String" itemvalue=":" />
+            <item index="37" class="java.lang.String" itemvalue="mincount" />
+            <item index="38" class="java.lang.String" itemvalue="maxcount" />
+            <item index="39" class="java.lang.String" itemvalue="progress" />
+            <item index="40" class="java.lang.String" itemvalue="namefield" />
+            <item index="41" class="java.lang.String" itemvalue="wait" />
+            <item index="42" class="java.lang.String" itemvalue="require" />
+            <item index="43" class="java.lang.String" itemvalue="text" />
+            <item index="44" class="java.lang.String" itemvalue="lessthan" />
+            <item index="45" class="java.lang.String" itemvalue="multiple" />
+            <item index="46" class="java.lang.String" itemvalue="rootvisible" />
+            <item index="47" class="java.lang.String" itemvalue="method" />
+            <item index="48" class="java.lang.String" itemvalue="group" />
+            <item index="49" class="java.lang.String" itemvalue="systype" />
+            <item index="50" class="java.lang.String" itemvalue="checkboxname" />
+            <item index="51" class="java.lang.String" itemvalue="checkmode" />
+            <item index="52" class="java.lang.String" itemvalue="legend" />
+            <item index="53" class="java.lang.String" itemvalue="page" />
+            <item index="54" class="java.lang.String" itemvalue="available" />
+            <item index="55" class="java.lang.String" itemvalue="selected" />
+            <item index="56" class="java.lang.String" itemvalue="fromlegend" />
+            <item index="57" class="java.lang.String" itemvalue="tolegend" />
+            <item index="58" class="java.lang.String" itemvalue="autorender" />
+            <item index="59" class="java.lang.String" itemvalue="onselect" />
+            <item index="60" class="java.lang.String" itemvalue="oncheck" />
+            <item index="61" class="java.lang.String" itemvalue="selectable" />
+            <item index="62" class="java.lang.String" itemvalue="showname" />
+            <item index="63" class="java.lang.String" itemvalue="msgtype" />
+            <item index="64" class="java.lang.String" itemvalue="from:rootvisible" />
+            <item index="65" class="java.lang.String" itemvalue="from:multiple" />
+            <item index="66" class="java.lang.String" itemvalue="format" />
+            <item index="67" class="java.lang.String" itemvalue="typename" />
+          </list>
+        </value>
+      </option>
+      <option name="myCustomValuesEnabled" value="true" />
+    </inspection_tool>
+    <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myValues">
+        <value>
+          <list size="7">
+            <item index="0" class="java.lang.String" itemvalue="embed" />
+            <item index="1" class="java.lang.String" itemvalue="nobr" />
+            <item index="2" class="java.lang.String" itemvalue="noembed" />
+            <item index="3" class="java.lang.String" itemvalue="comment" />
+            <item index="4" class="java.lang.String" itemvalue="script" />
+            <item index="5" class="java.lang.String" itemvalue="segment" />
+            <item index="6" class="java.lang.String" itemvalue="include" />
+          </list>
+        </value>
+      </option>
+      <option name="myCustomValuesEnabled" value="true" />
+    </inspection_tool>
+    <inspection_tool class="InfiniteLoopJS" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="InfiniteLoopStatement" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="InfiniteRecursion" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="JSUnusedLocalSymbols" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="JavaDoc" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="TOP_LEVEL_CLASS_OPTIONS">
+        <value>
+          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
+          <option name="REQUIRED_TAGS" value="@author" />
+        </value>
+      </option>
+      <option name="INNER_CLASS_OPTIONS">
+        <value>
+          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
+          <option name="REQUIRED_TAGS" value="" />
+        </value>
+      </option>
+      <option name="METHOD_OPTIONS">
+        <value>
+          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
+          <option name="REQUIRED_TAGS" value="@return@param@throws or @exception" />
+        </value>
+      </option>
+      <option name="FIELD_OPTIONS">
+        <value>
+          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
+          <option name="REQUIRED_TAGS" value="" />
+        </value>
+      </option>
+      <option name="IGNORE_DEPRECATED" value="false" />
+      <option name="IGNORE_JAVADOC_PERIOD" value="true" />
+      <option name="IGNORE_DUPLICATED_THROWS" value="false" />
+      <option name="IGNORE_POINT_TO_ITSELF" value="false" />
+      <option name="myAdditionalJavadocTags" value="date" />
+    </inspection_tool>
+    <inspection_tool class="JpaQlInspection" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="LoggerInitializedWithForeignClass" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="loggerClassName" value="org.apache.log4j.Logger,org.slf4j.LoggerFactory,org.apache.commons.logging.LogFactory,java.util.logging.Logger" />
+      <option name="loggerFactoryMethodName" value="getLogger,getLogger,getLog,getLogger" />
+    </inspection_tool>
+    <inspection_tool class="RequiredAttributes" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myAdditionalRequiredHtmlAttributes" value="cols,rows,src" />
+    </inspection_tool>
+    <inspection_tool class="SuspiciousMethodCalls" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="REPORT_CONVERTIBLE_METHOD_CALLS" value="true" />
+    </inspection_tool>
+    <inspection_tool class="SynchronizationOnLocalVariableOrMethodParameter" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="reportLocalVariables" value="true" />
+      <option name="reportMethodParameters" value="true" />
+    </inspection_tool>
+    <inspection_tool class="ThrowableInstanceNeverThrown" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="ThrowableResultOfMethodCallIgnored" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="UnhandledExceptionInJSP" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="XmlDuplicatedId" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="XmlUnboundNsPrefix" enabled="false" level="WARNING" enabled_by_default="false" />
+  </profile>
+</component>
