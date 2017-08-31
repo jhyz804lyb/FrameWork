@@ -437,6 +437,8 @@ public class Util
             filed.set(obj, Integer.parseInt(String.valueOf(data)));
         else if (filed.getType().equals(java.util.Date.class))
             filed.set(obj, (Date) data);
+        else if (filed.getType().equals(java.lang.String.class))
+            filed.set(obj, String.valueOf(data));
     }
 
     public static String replaceUrl(String oldUrl, Class className, Object object, String paName)
@@ -502,6 +504,20 @@ public class Util
             {
                 return getAnnotation(field, an);
             }
+        }
+        return null;
+    }
+
+    public static java.lang.annotation.Annotation getClassAnnotation(Class tigerClass,  Class an)
+    {
+        if (tigerClass == null ) return null;
+        for (java.lang.annotation.Annotation a : tigerClass.getAnnotations())
+        {
+            if (a.toString().indexOf(an.getSimpleName())>-1)
+            {
+                return a;
+            }
+
         }
         return null;
     }
@@ -577,5 +593,104 @@ public class Util
             }
         }
         return list;
+    }
+
+    public static InitMsg initValueForSave(HttpServletRequest request, Field[] Fileds, MethodParameter method)
+    {
+        if (Fileds == null || Fileds.length == 0)
+            return null;
+        Object[] parmen = new Object[Fileds.length];
+        boolean haskeys = false;
+        boolean hasID = false;
+        int size = 0;
+        List<String> filds = new ArrayList<String>();
+        List<Object> vals = new ArrayList<Object>();
+        // 如果主键的值不为空
+        for (Field field : Fileds)
+        {
+            if (getParameterValue(request, method, field) != null)
+            {
+                for (java.lang.annotation.Annotation other : field.getDeclaredAnnotations())
+                {
+                    java.lang.annotation.Annotation annotation =
+                            Util.getAnnotation(field, NotSerachField.class);
+                    NotSerachField serachField =
+                            (annotation instanceof NotSerachField) ? (NotSerachField) annotation : null;
+               /*     if (other instanceof javax.persistence.Id && serachField == null)
+                    {
+                        hasID = true;
+                        size++;
+                        filds.add(field.getName());
+                        vals.add(getParameterValue(request, method, field));
+                    }*/
+
+
+                }
+            }
+
+        }
+     /*   if (hasID)
+        {
+            InitMsg msg = new InitMsg(size, filds.toArray(new String[size]),
+                    vals.toArray(new Object[size]));
+            msg.setIskeys(haskeys);
+            msg.setId(hasID);
+            return msg;
+        }*/
+        size = 0;
+        first:
+        for (Field field : Fileds)
+        {
+            if (getParameterValue(request, method, field) != null)
+            {
+                if (haskeys)
+                {// 如果有查询主键
+
+                    for (java.lang.annotation.Annotation other : field.getDeclaredAnnotations())
+                    {
+                        if (other instanceof FindKey)
+                        {
+                            size++;
+                            filds.add(field.getName());
+                            vals.add(getParameterValue(request, method, field));
+                            continue first;
+                        }
+                    }
+                    Find find = method.getParameterAnnotation(Find.class);
+                    java.lang.annotation.Annotation annotation =
+                            Util.getAnnotation(field, NotSerachField.class);
+                    NotSerachField serachField =
+                            (annotation instanceof NotSerachField) ? (NotSerachField) annotation : null;
+                    //如果需要把没有注解的参数也加入查询条件，而且该字段本身没有不需要查询
+                    if (!find.isSerachKey() && serachField == null)
+                    {
+                        //把没有注解的字段属性同时加入集合中
+                        size++;
+                        filds.add(field.getName());
+                        vals.add(getParameterValue(request, method, field));
+                    }
+
+                }
+                else
+                {// 没有查询z注解的情况
+                    java.lang.annotation.Annotation annotation =
+                            Util.getAnnotation(field, NotSerachField.class);
+                    NotSerachField serachField =
+                            (annotation instanceof NotSerachField) ? (NotSerachField) annotation : null;
+                    if (serachField != null) continue;
+                    size++;
+                    filds.add(field.getName());
+                    vals.add(getParameterValue(request, method, field));
+                }
+
+            }
+
+        }
+        InitMsg msg = new InitMsg(size, filds.toArray(new String[size]),
+                vals.toArray(new Object[size]));
+        msg.setIskeys(haskeys);
+        msg.setId(hasID);
+        return msg;
+
     }
 }

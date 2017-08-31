@@ -9,6 +9,8 @@ import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 @Service
@@ -16,6 +18,9 @@ public class DataBindUnit
 {
     @Autowired
     protected SessionFactory sessionFactory;
+
+
+
 
     public Object initData(HttpServletRequest request, Annotation type,
                            Class tigerClass, MethodParameter method) throws Exception
@@ -25,7 +30,8 @@ public class DataBindUnit
         switch (type)
         {
             case ADD:
-                break;
+                return SaveEntity(request, tigerClass, method);
+
             case FIND:
                 Find parameterAnnotation = method.getParameterAnnotation(Find.class);
                 //只注解 Find 没有加入其它参数
@@ -60,6 +66,7 @@ public class DataBindUnit
 
         return null;
     }
+
 
     /**
      * 持久层实体查询
@@ -155,6 +162,7 @@ public class DataBindUnit
             oql.append("FROM ").append(tigerClass.getName()).append(" e where 1 = 1");
             for (int i = 0; i < par.getSize(); i++)
             {
+
                 java.lang.annotation.Annotation annotation =
                         Util.getAnnotation(tigerClass, filds[i], FindKey.class);
                 FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
@@ -189,6 +197,8 @@ public class DataBindUnit
         }
     }
 
+
+
     private Object FindDTOEntity(HttpServletRequest request, Annotation type,
                                   Class tigerClass, MethodParameter method) throws Exception
      {
@@ -206,4 +216,48 @@ public class DataBindUnit
         return null;
     }
 
+    /**
+     * 持久层实体
+     *
+     * @param request
+     * @param tigerClass
+     * @param method
+     * @return
+     * @throws Exception
+     */
+    private Object SaveEntity(HttpServletRequest request,
+                                    Class tigerClass, MethodParameter method) throws Exception
+    {
+        InitMsg par = Util.initValueForSave(request, Util.getParment(tigerClass), method);
+        Session session = sessionFactory.openSession();
+        String[] filds = par.getFilds();
+        Object[] values = par.getValues();
+        boolean issave=false;
+        Object et= tigerClass.newInstance();
+        java.lang.annotation.Annotation annotation =
+                Util.getClassAnnotation(tigerClass, Verify.class);
+        Verify verify = (annotation instanceof Verify) ? (Verify) annotation : null;
+            for (int i = 0; i <par.getSize(); i++)
+            {
+
+                if (verify != null)
+                {
+                    for (Field field : tigerClass.getDeclaredFields()){
+                        if (field.getName().equals(filds[i])){
+                            Util.setData(field,values[i],et);
+                        }
+
+                    }
+                }
+            }
+        Method m1=tigerClass.getDeclaredMethod(verify.MethodName());
+        issave= (boolean) m1.invoke(et);
+        if (issave){//检查通过存储
+            Session s = sessionFactory.openSession();
+            s.save(et);
+            session.close();
+            return  issave;
+        }
+        return issave;
+    }
 }

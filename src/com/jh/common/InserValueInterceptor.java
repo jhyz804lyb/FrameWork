@@ -1,6 +1,8 @@
 package com.jh.common;
 
+import com.jh.Interceptor.Add;
 import com.jh.Interceptor.Find;
+import com.jh.Interceptor.Save;
 import com.jh.utils.*;
 import enums.Annotation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,15 @@ public class InserValueInterceptor implements HandlerInterceptor
                 {
                     arg0.setAttribute(Find.class.getName(), obj);
                 }
+            }
+            //如果是 Add 注解的参数。则 去数据库匹配对象
+
+            if (parameter.hasParameterAnnotation(Add.class))
+            {
+                //得到具体的实体class
+                Class classType = Util.getClassByMethodParameter(parameter);
+                Object obj = dataBindUnit.initData(arg0, Annotation.ADD, classType, parameter);
+
             }
         }
         return true;
