@@ -318,39 +318,6 @@ public class Util
         return null;
     }
 
-    public static void initValue(HttpServletRequest request, Object obj)
-            throws Exception
-    {
-        if (obj == null)
-            return;
-        for (Field field : request.getClass().getDeclaredFields())
-        {
-            System.out.println(field.getName());
-            System.out.println(field.getType());
-            for (Field aa : field.getType().getDeclaredFields())
-            {
-                System.out.println(aa.getName());
-                System.out.println(aa.getType());
-            }
-        }
-        Map<String, String[]> maps = request.getParameterMap();
-        Map<String, String[]> newMaps = new HashMap<String, String[]>();
-        for (Field field : obj.getClass().getDeclaredFields())
-        {
-            String[] value = new String[]{ReflectionUtil.getValue(obj,
-                    field.getName()).toString()};
-            newMaps.put(field.getName(), value);
-        }
-        for (Map.Entry<String, String[]> entry : maps.entrySet())
-        {
-            if (newMaps.get(entry.getKey()) == null) continue;
-            String value[] = entry.getValue();
-            newMaps.put(entry.getKey(), value);
-        }
-        request.setAttribute(obj.getClass().getName() + ".entity", obj);
-        //request = new ParameterRequestWrapper(request,newMaps);
-    }
-
     public static Object parsueData(Field filed, String data) throws ParseException
     {
         if (filed.getType().equals(java.lang.String.class))
@@ -404,7 +371,50 @@ public class Util
         }
         return data;
     }
-
+    public static String parsueData(Field filed, Object data) throws ParseException
+    {
+        if (filed.getType().equals(java.lang.String.class))
+        {
+            return data.toString();
+        }
+        else if (filed.getType().equals(java.lang.Integer.class)
+                || filed.getType().toString().trim().equals("int"))
+        {
+            return String.valueOf(data);
+        }
+        else if (filed.getType().equals(java.lang.Long.class)
+                || filed.getType().toString().trim().equals("long"))
+            return String.valueOf(data);
+        else if (filed.getType().equals(java.lang.Double.class)
+                || filed.getType().toString().trim().equals("double"))
+            return  String.valueOf(data);
+        else if (filed.getType().equals(java.lang.Float.class)
+                || filed.getType().toString().trim().equals("float"))
+            return  String.valueOf(data);
+        if (filed.getType().equals(java.lang.Short.class)
+                || filed.getType().toString().trim().equals("short"))
+            return  String.valueOf(data);
+        if (filed.getType().equals(java.lang.Byte.class)
+                || filed.getType().toString().trim().equals("byte"))
+            return  String.valueOf(data);
+        if (filed.getType().equals(java.lang.Character.class)
+                || filed.getType().toString().trim().equals("char"))
+            return  String.valueOf(data);
+        if (filed.getType().equals(java.lang.Boolean.class)
+                || filed.getType().toString().trim().equals("boolean"))
+            return  String.valueOf(data);
+        else if (filed.getType().equals(java.util.Date.class))
+        {
+            SimpleDateFormat formatSecond = new SimpleDateFormat("yyyyMMddhhmmss");
+            return formatSecond.format(data);
+        }
+        else if (filed.getType().equals(java.sql.Date.class))
+        {
+            SimpleDateFormat formatSecond = new SimpleDateFormat("yyyyMMdd");
+            return formatSecond.format(data);
+        }
+        return data.toString();
+    }
     public static void setData(Field filed, Object data, Object obj) throws Exception
     {
         filed.setAccessible(true);
@@ -508,12 +518,12 @@ public class Util
         return null;
     }
 
-    public static java.lang.annotation.Annotation getClassAnnotation(Class tigerClass,  Class an)
+    public static java.lang.annotation.Annotation getClassAnnotation(Class tigerClass, Class an)
     {
-        if (tigerClass == null ) return null;
+        if (tigerClass == null) return null;
         for (java.lang.annotation.Annotation a : tigerClass.getAnnotations())
         {
-            if (a.toString().indexOf(an.getSimpleName())>-1)
+            if (a.toString().indexOf(an.getSimpleName()) > -1)
             {
                 return a;
             }
@@ -541,6 +551,7 @@ public class Util
 
     /**
      * 得到排序字段
+     *
      * @param asName
      * @param entityClass
      * @return
@@ -563,12 +574,12 @@ public class Util
         for (Field filed : orderList)
         {
             OrderByField annotation = (OrderByField) getAnnotation(filed, OrderByField.class);
-            orderStr.append(filed.getName()+" ").append(annotation.orderType()).append(",");
+            orderStr.append(filed.getName() + " ").append(annotation.orderType()).append(",");
 
         }
         if (orderStr.length() > 0)
         {
-            return  orderStr.substring(0, orderStr.length()-1);
+            return orderStr.substring(0, orderStr.length() - 1);
         }
         return orderStr.toString();
     }
@@ -599,7 +610,6 @@ public class Util
     {
         if (Fileds == null || Fileds.length == 0)
             return null;
-        Object[] parmen = new Object[Fileds.length];
         boolean haskeys = false;
         boolean hasID = false;
         int size = 0;
@@ -610,81 +620,10 @@ public class Util
         {
             if (getParameterValue(request, method, field) != null)
             {
-                for (java.lang.annotation.Annotation other : field.getDeclaredAnnotations())
-                {
-                    java.lang.annotation.Annotation annotation =
-                            Util.getAnnotation(field, NotSerachField.class);
-                    NotSerachField serachField =
-                            (annotation instanceof NotSerachField) ? (NotSerachField) annotation : null;
-               /*     if (other instanceof javax.persistence.Id && serachField == null)
-                    {
-                        hasID = true;
-                        size++;
-                        filds.add(field.getName());
-                        vals.add(getParameterValue(request, method, field));
-                    }*/
-
-
-                }
+                filds.add(field.getName());
+                vals.add(getParameterValue(request, method, field));
+                size++;
             }
-
-        }
-     /*   if (hasID)
-        {
-            InitMsg msg = new InitMsg(size, filds.toArray(new String[size]),
-                    vals.toArray(new Object[size]));
-            msg.setIskeys(haskeys);
-            msg.setId(hasID);
-            return msg;
-        }*/
-        size = 0;
-        first:
-        for (Field field : Fileds)
-        {
-            if (getParameterValue(request, method, field) != null)
-            {
-                if (haskeys)
-                {// 如果有查询主键
-
-                    for (java.lang.annotation.Annotation other : field.getDeclaredAnnotations())
-                    {
-                        if (other instanceof FindKey)
-                        {
-                            size++;
-                            filds.add(field.getName());
-                            vals.add(getParameterValue(request, method, field));
-                            continue first;
-                        }
-                    }
-                    Find find = method.getParameterAnnotation(Find.class);
-                    java.lang.annotation.Annotation annotation =
-                            Util.getAnnotation(field, NotSerachField.class);
-                    NotSerachField serachField =
-                            (annotation instanceof NotSerachField) ? (NotSerachField) annotation : null;
-                    //如果需要把没有注解的参数也加入查询条件，而且该字段本身没有不需要查询
-                    if (!find.isSerachKey() && serachField == null)
-                    {
-                        //把没有注解的字段属性同时加入集合中
-                        size++;
-                        filds.add(field.getName());
-                        vals.add(getParameterValue(request, method, field));
-                    }
-
-                }
-                else
-                {// 没有查询z注解的情况
-                    java.lang.annotation.Annotation annotation =
-                            Util.getAnnotation(field, NotSerachField.class);
-                    NotSerachField serachField =
-                            (annotation instanceof NotSerachField) ? (NotSerachField) annotation : null;
-                    if (serachField != null) continue;
-                    size++;
-                    filds.add(field.getName());
-                    vals.add(getParameterValue(request, method, field));
-                }
-
-            }
-
         }
         InitMsg msg = new InitMsg(size, filds.toArray(new String[size]),
                 vals.toArray(new Object[size]));

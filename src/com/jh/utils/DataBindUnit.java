@@ -20,8 +20,6 @@ public class DataBindUnit
     protected SessionFactory sessionFactory;
 
 
-
-
     public Object initData(HttpServletRequest request, Annotation type,
                            Class tigerClass, MethodParameter method) throws Exception
     {
@@ -52,7 +50,7 @@ public class DataBindUnit
 
                 }
                 //如果这次查询使用SQL语句来执行
-                else if(!StringUtils.isNull(parameterAnnotation.SQL()))
+                else if (!StringUtils.isNull(parameterAnnotation.SQL()))
                 {
 
                 }
@@ -133,7 +131,7 @@ public class DataBindUnit
                     oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
                 }
             }
-            oql.append(Util.getOrderByStr("",tigerClass));
+            oql.append(Util.getOrderByStr("", tigerClass));
             Query query = session.createQuery(oql.toString());
             for (int i = 0; i < par.getSize(); i++)
             {
@@ -176,7 +174,7 @@ public class DataBindUnit
                     oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
                 }
             }
-            oql.append(Util.getOrderByStr("",tigerClass));
+            oql.append(Util.getOrderByStr("", tigerClass));
             Query query = session.createQuery(oql.toString());
             for (int i = 0; i < par.getSize(); i++)
             {
@@ -198,18 +196,18 @@ public class DataBindUnit
     }
 
 
-
     private Object FindDTOEntity(HttpServletRequest request, Annotation type,
-                                  Class tigerClass, MethodParameter method) throws Exception
-     {
-         return null;
-     }
+                                 Class tigerClass, MethodParameter method) throws Exception
+    {
+        return null;
+    }
 
     private Object FindOQLEntity(HttpServletRequest request, Annotation type,
                                  Class tigerClass, MethodParameter method) throws Exception
     {
         return null;
     }
+
     private Object FindSQLEntity(HttpServletRequest request, Annotation type,
                                  Class tigerClass, MethodParameter method) throws Exception
     {
@@ -226,37 +224,61 @@ public class DataBindUnit
      * @throws Exception
      */
     private Object SaveEntity(HttpServletRequest request,
-                                    Class tigerClass, MethodParameter method) throws Exception
+                              Class tigerClass, MethodParameter method) throws Exception
     {
         InitMsg par = Util.initValueForSave(request, Util.getParment(tigerClass), method);
         Session session = sessionFactory.openSession();
         String[] filds = par.getFilds();
         Object[] values = par.getValues();
-        boolean issave=false;
-        Object et= tigerClass.newInstance();
+        boolean issave = false;
+        Object et = tigerClass.newInstance();
         java.lang.annotation.Annotation annotation =
                 Util.getClassAnnotation(tigerClass, Verify.class);
         Verify verify = (annotation instanceof Verify) ? (Verify) annotation : null;
-            for (int i = 0; i <par.getSize(); i++)
+        for (int i = 0; i < par.getSize(); i++)
+        {
+            for (Field field : tigerClass.getDeclaredFields())
             {
-
-                if (verify != null)
+                if (field.getName().equals(filds[i]))
                 {
-                    for (Field field : tigerClass.getDeclaredFields()){
-                        if (field.getName().equals(filds[i])){
-                            Util.setData(field,values[i],et);
-                        }
-
-                    }
+                    Util.setData(field, values[i], et);
                 }
             }
-        Method m1=tigerClass.getDeclaredMethod(verify.MethodName());
-        issave= (boolean) m1.invoke(et);
-        if (issave){//检查通过存储
+        }
+        boolean isPass = true;
+        //如果有这个注解说明需要 校验外部方法
+        if (verify != null)
+        {
+            String classPath = verify.classPath();
+            Class aClass = null;
+            try
+            {
+                //找到校验的类
+                aClass = Class.forName(classPath);
+            }
+            catch (ClassNotFoundException e)
+            {//类没有找到不匹配}
+            }
+            //使用springde 容器代理生成对象。这样可以实现依赖注入
+            Object bean = ApplicationContextUtil.getApplicationContext().getBean(aClass);
+            //找到需要代理的方法
+            Method declaredMethod = aClass.getDeclaredMethod(verify.MethodName());
+            //代理执行验证方法。原则上这个方法会返回一个 boolean值
+            isPass = (boolean) declaredMethod.invoke(bean, et);
+        }
+        //如果外部方法已经通过验证这验证必填的字段
+        if (isPass)
+        {
+            isPass = CheckUtil.checkFiled(et, tigerClass);
+        }
+       // Method m1 = tigerClass.getDeclaredMethod(verify.MethodName());
+        //issave = (boolean) m1.invoke(et);
+        if (isPass)
+        {//检查通过存储
             Session s = sessionFactory.openSession();
             s.save(et);
             session.close();
-            return  issave;
+            return issave;
         }
         return issave;
     }
