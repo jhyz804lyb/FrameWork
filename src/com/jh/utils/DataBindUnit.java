@@ -261,17 +261,24 @@ public class DataBindUnit
             }
             //使用springde 容器代理生成对象。这样可以实现依赖注入
             Object bean = ApplicationContextUtil.getApplicationContext().getBean(aClass);
-            //找到需要代理的方法
-            Method declaredMethod = aClass.getDeclaredMethod(verify.MethodName());
-            //代理执行验证方法。原则上这个方法会返回一个 boolean值
-            isPass = (boolean) declaredMethod.invoke(bean, et);
+            for (Method methods : aClass.getDeclaredMethods())
+            {
+                   //找到需要代理的方法
+                if (methods.getName().equals(verify.MethodName()))
+                {
+                    //代理执行验证方法。原则上这个方法会返回一个 boolean值
+                    isPass = (boolean) methods.invoke(bean, et);
+                }
+            }
+           // Method declaredMethod = aClass.getDeclaredMethod(verify.MethodName());
+           // isPass = (boolean) declaredMethod.invoke(bean, et);
         }
         //如果外部方法已经通过验证这验证必填的字段
         if (isPass)
         {
             isPass = CheckUtil.checkFiled(et, tigerClass);
         }
-       // Method m1 = tigerClass.getDeclaredMethod(verify.MethodName());
+        // Method m1 = tigerClass.getDeclaredMethod(verify.MethodName());
         //issave = (boolean) m1.invoke(et);
         if (isPass)
         {//检查通过存储

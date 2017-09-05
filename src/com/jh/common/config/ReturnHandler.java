@@ -29,7 +29,6 @@ public class ReturnHandler implements HandlerMethodReturnValueHandler
     @Override
     public boolean supportsReturnType(MethodParameter methodParameter)
     {
-
         return methodParameter.getMethod().getAnnotation(Json.class)!=null;
     }
 

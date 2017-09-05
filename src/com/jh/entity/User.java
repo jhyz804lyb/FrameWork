@@ -11,8 +11,8 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity(name = "User")
-@Table(name = "User")
-@Verify(classPath = "com.jh.entity.User", MethodName = "savecheck")
+@Table(name = "USER")
+@Verify(classPath = "com.jh.vilidata.Vilidata", MethodName = "checkUserInfo")
 public class User implements Serializable
 {
     /**

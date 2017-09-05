@@ -1,8 +1,6 @@
 package com.jh.common;
 
-import com.jh.Interceptor.Add;
-import com.jh.Interceptor.Find;
-import com.jh.Interceptor.Save;
+import com.jh.Interceptor.*;
 import com.jh.utils.*;
 import enums.Annotation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,27 +44,32 @@ public class InserValueInterceptor implements HandlerInterceptor
         boolean hasAnnotation = false;
         for (MethodParameter parameter : temp)
         {
-            //如果是 Find 注解的参数。则 去数据库匹配对象
-            hasAnnotation = parameter.hasParameterAnnotation(Find.class);
-            if (hasAnnotation)
+            for (java.lang.annotation.Annotation an : parameter.getParameterAnnotations())
             {
-                //得到具体的实体class
-                Class classType = Util.getClassByMethodParameter(parameter);
-                Object obj = dataBindUnit.initData(arg0, Annotation.FIND, classType, parameter);
-                if (obj != null)
+                //由于可能出现添加成功后返回实体对象所以这里要考虑到 add 和 find 以及其他注解同时标注在一个参数上的情况
+                if (an instanceof Find)
                 {
-                    arg0.setAttribute(Find.class.getName(), obj);
+                    //得到具体的实体class
+                    Class classType = Util.getClassByMethodParameter(parameter);
+                    Object obj = dataBindUnit.initData(arg0, Annotation.FIND, classType, parameter);
+                    if (obj != null)
+                    {
+                        arg0.setAttribute(Find.class.getName(), obj);
+                    }
+                }
+                if (an instanceof Add)
+                {
+                    //如果是 Add 注解的参数。则 去数据库匹配对象
+                    if (parameter.hasParameterAnnotation(Add.class))
+                    {
+                        //得到具体的实体class
+                        Class classType = Util.getClassByMethodParameter(parameter);
+                        Object obj = dataBindUnit.initData(arg0, Annotation.ADD, classType, parameter);
+
+                    }
                 }
             }
-            //如果是 Add 注解的参数。则 去数据库匹配对象
 
-            if (parameter.hasParameterAnnotation(Add.class))
-            {
-                //得到具体的实体class
-                Class classType = Util.getClassByMethodParameter(parameter);
-                Object obj = dataBindUnit.initData(arg0, Annotation.ADD, classType, parameter);
-
-            }
         }
         return true;
     }
