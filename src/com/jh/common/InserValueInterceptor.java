@@ -69,7 +69,6 @@ public class InserValueInterceptor implements HandlerInterceptor
                     }
                 }
             }
-
         }
         return true;
     }
