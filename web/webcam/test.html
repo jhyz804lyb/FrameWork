@@ -2,11 +2,15 @@
 <head>
     <meta charset="utf-8">
     <title>jQuery-webcam-master</title>
-    <link href="cs.css" rel="stylesheet" type="text/css">
-    <script src="jquery-1.11.0.js"></script>
-    <script src="jquery.webcam.min.js"></script>
+    <link href="/webcam/cs.css" rel="stylesheet" type="text/css">
+    <script src="/webcam/jquery-1.11.0.js"></script>
+    <script src="/webcam/jquery.webcam.min.js"></script>
     <script type="text/javascript">
-        $(function() {
+
+        var isInit = true;
+        var timeTip;
+        $(function ()
+        {
 
             var pos = 0, ctx = null, saveCB, image = [];
 //创建画布指定宽度和高度
@@ -14,43 +18,77 @@
             canvas.setAttribute('width', 320);
             canvas.setAttribute('height', 240);
 //如果画布成功创建
-            if (canvas.toDataURL) {
+            if (canvas.toDataURL)
+            {
 //设置画布为2d，未来可能支持3d
                 ctx = canvas.getContext("2d");
 //截图320*240，即整个画布作为有效区(cutx?)
                 image = ctx.getImageData(0, 0, 320, 240);
 
-                saveCB = function(data) {
+                saveCB = function (data)
+                {
 //把data切割为数组
                     var col = data.split(";");
                     var img = image;
 //绘制图像(这里不是很理解算法)
 //参数data  只是每行的数据  ，例如320*240 大小的照片，一张完整的照片下来需要240个data，每个data有320个rgb
-                    for(var i = 0; i < 320; i++) {
+                    for (var i = 0; i < 320; i++)
+                    {
                         //转换为十进制
                         var tmp = parseInt(col[i]);
                         img.data[pos + 0] = (tmp >> 16) & 0xff;
                         img.data[pos + 1] = (tmp >> 8) & 0xff;
                         img.data[pos + 2] = tmp & 0xff;
                         img.data[pos + 3] = 0xff;
-                        pos+= 4;
+                        pos += 4;
                     }
-//当绘制320*240像素的图片时发给后端php
-                    if (pos >= 4 * 320 * 240) {
+//当绘制320*240像素的图片时发
+                    if (pos >= 4 * 320 * 240)
+                    {
 //把图像放到画布上,输出为png格式
                         ctx.putImageData(img, 0, 0);
-                        $.post("../user/file", {type: "data", image: canvas.toDataURL("image/jpg")});
+                        if (isInit)
+                        {
+                            $.post("../user/initImage", {type: "data", image: canvas.toDataURL("image/jpg")},
+                                    function (data)
+                                    {
+                                        createDom(data.msg);
+                                    });
+                        }
+                        else
+                        {
+                            $.post("../user/CompareFaceImage", {type: "data", image: canvas.toDataURL("image/jpg")},
+                                    function (data)
+                                    {
+                                        createDom(data.msg);
+                                        if (data.success && data.success != "false")
+                                        {
+                                            if (timeTip != null && timeTip != undefined)  clearInterval(timeTip);
+
+                                            $("#faceImage").attr("src", "../user/getImage?imagePath=" + data.imagePath);
+                                        }
+                                        else
+                                        {
+
+                                            timeTip = setInterval(captureFace(), 100);
+                                        }
+                                    });
+                        }
                         pos = 0;
                     }
                 };
 
-            } else {
-                saveCB = function(data) {
+            }
+            else
+            {
+                saveCB = function (data)
+                {
 //把数据一点点的放入image[]
                     image.push(data);
-                    pos+= 4 * 320;
-                    if (pos >= 4 * 320 * 240) {
-                       // $.post("upload.php", {type: "pixel", image: image.join('|')});
+                    pos += 4 * 320;
+                    if (pos >= 4 * 320 * 240)
+                    {
+                        // $.post("upload.php", {type: "pixel", image: image.join('|')});
                         pos = 0;
                     }
                 };
@@ -59,15 +97,17 @@
                 width: 320,
                 height: 240,
                 mode: "callback",
-                swffile: "jscam_canvas_only.swf",
+                swffile: "/webcam/jscam_canvas_only.swf",
 
                 onSave: saveCB,
 
-                onCapture: function () {
+                onCapture: function ()
+                {
                     webcam.save();
                 },
 
-                debug: function (type, string) {
+                debug: function (type, string)
+                {
                     console.log(type + ": " + string);
                 }
             });
@@ -79,11 +119,59 @@
 //             * putImageData(绘制点的横坐标, 绘制点点纵坐标, imgData的起始点横坐标, imgData的起始点纵坐标, 宽度, 高度)
 //             */
         });
+        function captureFace()
+        {
+            isInit = false;
+            webcam.capture();
+        }
+        function initFace()
+        {
+            isInit = true;
+            webcam.capture();
+        }
+        function getTime()
+        {
+            var tody = new Date();
+            var nian = tody.getFullYear();
+            var youe = tody.getMonth() + 1;
+            var day = tody.getDate();
+            var hour = tody.getHours();
+            var min = tody.getMinutes();
+            var miao = tody.getSeconds();
+            return nian + "-" + youe + "-" + day+"-" + hour + ":" + min + ":" + miao+":"+tody.getMilliseconds();
+        }
+        function createDom(msg)
+        {
+            var addThml="<p>"+getTime()+":"+msg +"</p>";
+            $("#consoleLog").html(addThml+$("#consoleLog").html());
+        }
     </script>
 </head>
 <body>
-<div id="webcam"></div>
-<input type="button" onclick="webcam.capture();" value="点击触发" >
+    <form id="upload">
+        <input id="image" name="image" type="hidden"/>
+    </form>
+
+    <div id="webcam" style="float: left;margin-left: 160px"></div>
+    <span style="float: left;margin-left: 20px"> 对比找到的人脸：</span>
+    <img style="width: 320px;height: 240px;float: left;" id="faceImage" src=""/>
+    <div style="font-size: 16px;width: 500px;float: left;border: 1px solid #ececec;background-color:#f1f1f1;margin-left: 20px;text-align:left;padding-left: 8px;color:red;">
+        <h4 style="text-align: center">使用说明：</h4>
+        <p>1、“人脸采集”通过摄像头获取照片加入人脸特征库。一个张人脸只能入库一次。重复入库提示失败。未入库可能找不到与您对应的人脸特征</p>
+        <p>2、“人脸比对”通过摄像头获取照片在特征库中进行比对最终找到符合的特征图片并且显示。前提是你的人脸特征已经入库</p>
+        <p>3、请注意控制台提示信息！</p>
+        <p>4、由于JS 调用摄像头如遇到询问请允许浏览器打开摄像头！</p>
+        <p>5、可能遇到的情况：Falsh未安装。无法打开摄像头。低版本ie内核浏览器无法打开摄像头！</p>
+    </div>
+    <div style="float: left;width: 80%;margin-top: 30px;padding-left:20%">
+        <input type="button" onclick="initFace();" value="人脸采集">
+        <input type="button" onclick="captureFace();" value="开始比对">
+    </div>
+    <div id="consoleLog"
+         style="float: left;width:93%;padding: 10px;background-color: black;color:white;font-size: 14px;overflow-y: auto;padding-left:20px;margin-top: 50px;height: 300px ">
+
+    </div>
+
 </body>
 
 </html>
