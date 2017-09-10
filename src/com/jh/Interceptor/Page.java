@@ -12,4 +12,5 @@ import java.lang.annotation.*;
 @Documented
 public @interface Page
 {
+   int defaultCount() default 10;
 }

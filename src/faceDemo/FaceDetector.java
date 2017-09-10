@@ -1,13 +1,11 @@
 package faceDemo;
 
-import org.opencv.core.Core;
-
 public class FaceDetector
 {
 
     public static void main(String[] args)
     {
-       System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+     //  System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 /*        System.out.println("init");
         CascadeClassifier faceDetector = new CascadeClassifier(
                 "D:\\openCvJDK\\opencv\\build\\etc\\haarcascades\\haarcascade_frontalface_alt.xml");

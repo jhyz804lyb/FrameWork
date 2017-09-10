@@ -69,7 +69,7 @@ public class UserAction
         return new MatchCount();
     }
 
- //   @RequestMapping(value = "initImage")
+    //   @RequestMapping(value = "initImage")
     @ResponseBody
     public Map<String, String> uplodaImage(String image)
     {
@@ -100,7 +100,7 @@ public class UserAction
     }
 
 
-   // @RequestMapping(value = "CompareFaceImage")
+    // @RequestMapping(value = "CompareFaceImage")
     @ResponseBody
     public Map<String, String> CompareFace(String image)
     {
@@ -150,7 +150,7 @@ public class UserAction
         }
     }
 
-   @RequestMapping(value = "initImage")
+    @RequestMapping(value = "initImage")
     @ResponseBody
     public Map<String, String> uplodaImage1(String image) throws IOException
     {
@@ -180,7 +180,7 @@ public class UserAction
 
     @RequestMapping(value = "CompareFaceImage")
     @ResponseBody
-    public Map<String, String> CompareFace1(String image)
+    public Map<String, String> CompareFace1(String image) throws IOException
     {
         Map<String, String> map = new HashMap<String, String>();
         if (StringUtils.isNull(image))
@@ -197,7 +197,8 @@ public class UserAction
         {
             for (Map<String, String> msp : maps)
             {
-                System.out.println("图片路径------------"+msp.get("imagePath")+"--------------相似度："+msp.get("result"));
+                System.out
+                        .println("图片路径------------" + msp.get("imagePath") + "--------------相似度：" + msp.get("result"));
             }
         }
         if (faceExist)
@@ -214,4 +215,10 @@ public class UserAction
         return map;
     }
 
+    @RequestMapping(value = "addFace")
+    @Json
+    public FaceInfo addFaceImg(@Add FaceInfo faceInfo) throws IOException
+    {
+        return faceInfo;
+    }
 }

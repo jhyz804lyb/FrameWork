@@ -24,6 +24,10 @@ public class BaseDaoImlp<T> implements BaseDao<T> {
 				.getGenericSuperclass();
 		targetClass = (Class<T>) type.getActualTypeArguments()[0];
 	}
+	public BaseDaoImlp(SessionFactory sessionFactory) {
+		// 获取类型
+	this.setSessionFactory(sessionFactory);
+	}
 
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;

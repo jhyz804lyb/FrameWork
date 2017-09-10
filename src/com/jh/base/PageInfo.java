@@ -21,6 +21,10 @@ public class PageInfo
      */
     private Integer maxPage;
     /**
+     * 多少数据
+     */
+    private Integer maxCount;
+    /**
      * 每页多少数据
      */
     private Integer pageCount;
@@ -81,5 +85,13 @@ public class PageInfo
     public void setParameterUrl(String parameterUrl)
     {
         this.parameterUrl = parameterUrl;
+    }
+
+    public Integer getMaxCount() {
+        return maxCount;
+    }
+
+    public void setMaxCount(Integer maxCount) {
+        this.maxCount = maxCount;
     }
 }

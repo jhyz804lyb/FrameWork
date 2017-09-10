@@ -1,5 +1,6 @@
 package com.jh.common;
 
+import com.jh.Interceptor.*;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -7,7 +8,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import com.jh.Interceptor.Find;
 
 @Component
 public class FindResolver implements HandlerMethodArgumentResolver {
@@ -18,7 +18,7 @@ public class FindResolver implements HandlerMethodArgumentResolver {
      */
 	@Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return  parameter.getParameterAnnotation(Find.class) != null;
+        return  parameter.getParameterAnnotation(Find.class) != null||parameter.getParameterAnnotation(Add.class) != null;
     }
 
     /**
@@ -35,6 +35,7 @@ public class FindResolver implements HandlerMethodArgumentResolver {
             ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) throws Exception {
 		Object result =webRequest.getAttribute(Find.class.getName(), WebRequest.SCOPE_REQUEST);
+        result =result==null?webRequest.getAttribute(Add.class.getName(), WebRequest.SCOPE_REQUEST):result;
         return result; 
     }
 

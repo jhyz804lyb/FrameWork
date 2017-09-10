@@ -1,6 +1,7 @@
 package com.jh.utils;
 
 import com.jh.Interceptor.*;
+import com.jh.entity.EBase;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
@@ -17,8 +18,15 @@ public class CheckUtil
         if (entity == null || className == null) return false;
         for (Field field : className.getDeclaredFields())
         {
-            if (!checkNotNull(field, entity)||!checkValue(field,entity))
+            if (!checkNotNull(field, entity) || !checkValue(field, entity))
             {
+                if (entity instanceof EBase)
+                {
+                    EBase base = (EBase) entity;
+                    String msg =!checkNotNull(field, entity)?"添加失败，字段:"+field.getName()+"不能为空！":"添加失败，字段:"+field.getName()+"格式不正确！";
+                    base.setMsg(msg);
+                    base.setSuccess(false);
+                }
                 return false;
             }
         }
@@ -60,7 +68,7 @@ public class CheckUtil
         {
             Regular regular = (Regular) Util.getAnnotation(field, Regular.class);
             Pattern pattern = Pattern.compile(regular.value());
-            String data = Util.parsueData(field, field.get(entity));
+            String data = Util.convernData(field, field.get(entity));
             Matcher match = pattern.matcher(data);
             return match.matches();
         }

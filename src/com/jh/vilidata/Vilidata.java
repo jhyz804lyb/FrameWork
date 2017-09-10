@@ -1,7 +1,7 @@
 package com.jh.vilidata;
 
-import com.jh.entity.User;
-import com.jh.service.UserService;
+import com.jh.entity.*;
+import com.jh.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +14,9 @@ public class Vilidata
 {
     @Autowired
     UserService userService;
+
+    @Autowired
+    FaceService faceService;
 
     public Vilidata()
     {
@@ -31,5 +34,18 @@ public class Vilidata
         User result = (User) user;
         boolean b = userService.checkUserName(result.getUsername());
         return b;
+    }
+
+    /**
+     * 校验用户信息的的方法
+     *
+     * @param face
+     * @return
+     */
+    public boolean checkFaceInfo(Object face)
+    {
+        if (!(face instanceof FaceInfo)) return false;
+        FaceInfo result = (FaceInfo) face;
+        return faceService.checkFace(result);
     }
 }

@@ -1,7 +1,8 @@
 package com.jh.utils;
 
 import com.jh.Interceptor.*;
-import com.jh.common.InitMsg;
+import com.jh.base.*;
+import com.jh.common.*;
 import enums.Annotation;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,48 +12,45 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.*;
 
 @Service
-public class DataBindUnit
-{
+public class DataBindUnit {
+
     @Autowired
     protected SessionFactory sessionFactory;
 
+    @Autowired
+    CreatePageInfoInteface pageIntefac;
+
+    BaseDao baseDao;
 
     public Object initData(HttpServletRequest request, Annotation type,
-                           Class tigerClass, MethodParameter method) throws Exception
-    {
+                           Class tigerClass, MethodParameter method) throws Exception {
         if (tigerClass == null)
             return null;
-        switch (type)
-        {
+        switch (type) {
             case ADD:
                 return SaveEntity(request, tigerClass, method);
-
             case FIND:
                 Find parameterAnnotation = method.getParameterAnnotation(Find.class);
                 //只注解 Find 没有加入其它参数
                 if (StringUtils.isNull(parameterAnnotation.entityClass()) &&
                         StringUtils.isNull(parameterAnnotation.OQL()) &&
-                        StringUtils.isNull(parameterAnnotation.SQL()))
-                {
+                        StringUtils.isNull(parameterAnnotation.SQL())) {
                     return FindCommonEntity(request, tigerClass, method);
                 }
                 //如果标明具体的实体类的class。 这种情况 大多是在DTO中应用到
-                else if (!StringUtils.isNull(parameterAnnotation.entityClass()))
-                {
-
+                else if (!StringUtils.isNull(parameterAnnotation.entityClass())) {
+                    return FindDTOEntity(request, tigerClass, parameterAnnotation, method);
                 }
-                //如果这个查询使用OQL语句来执行
-                else if (!StringUtils.isNull(parameterAnnotation.OQL()))
-                {
-
+                //如果这次查询使用OQL语句来执行
+                else if (!StringUtils.isNull(parameterAnnotation.OQL())) {
+                    return FindOQLEntity(request, parameterAnnotation, tigerClass, method);
                 }
                 //如果这次查询使用SQL语句来执行
-                else if (!StringUtils.isNull(parameterAnnotation.SQL()))
-                {
-
+                else if (!StringUtils.isNull(parameterAnnotation.SQL())) {
+                    return FindSQLEntity(request, parameterAnnotation, tigerClass, method);
                 }
                 break;
             case DELETE:
@@ -76,142 +74,410 @@ public class DataBindUnit
      * @throws Exception
      */
     private Object FindCommonEntity(HttpServletRequest request,
-                                    Class tigerClass, MethodParameter method) throws Exception
-    {
+                                    Class tigerClass, MethodParameter method) throws Exception {
         InitMsg par = Util.initValue(request, Util.getParment(tigerClass), method);
-        if (par.isId())
-        {//如果是id查询
-            Session session = sessionFactory.openSession();
-            String[] filds = par.getFilds();
-            Object[] values = par.getValues();
-            StringBuilder oql = new StringBuilder();
+        Session session = sessionFactory.openSession();
+        String[] filds = par.getFilds();
+        Object[] values = par.getValues();
+        StringBuilder oql = new StringBuilder();
+        Query query = null;
+        if (par.isId()) //如果是id查询
+        {
             oql.append("FROM ").append(tigerClass.getName()).append(" e where 1 = 1");
-            for (int i = 0; i < par.getSize(); i++)
-            {
+            for (int i = 0; i < par.getSize(); i++) {
                 oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
             }
-            oql.append(Util.getOrderByStr("", tigerClass));
-            Query query = session.createQuery(oql.toString());
-            for (int i = 0; i < par.getSize(); i++)
-            {
-                query.setParameter(filds[i],
-                        Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
-            }
-            List<Object> list = query.list();
-            session.close();
-            //如果是集合类型目前只拓展 List其他的Map之类后续拓展
-            if (java.util.Collection.class.isAssignableFrom(method.getParameterType()))
-            {
-                return list;
-            }
-            else
-            {
-                return (list == null || list.size() == 0 ? null : list.get(0));
-            }
-        }
-        else if (par.isIskeys())
-        {
-            Session session = sessionFactory.openSession();
-            String[] filds = par.getFilds();
-            Object[] values = par.getValues();
-            StringBuilder oql = new StringBuilder();
+            String orderByStr = Util.getOrderByStr("", tigerClass);
+            oql.append(orderByStr);
+        } else if (par.isIskeys()) {
             oql.append("FROM ").append(tigerClass.getName()).append(" e where 1 = 1");
-            for (int i = 0; i < par.getSize(); i++)
-            {
+            for (int i = 0; i < par.getSize(); i++) {
                 java.lang.annotation.Annotation annotation =
                         Util.getAnnotation(tigerClass, filds[i], FindKey.class);
                 FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
-                if (findKey != null)
-                {
+                if (findKey != null) {
                     oql.append(" AND ").append(filds[i]).append(" " + findKey.selectType() + " :").append(
                             filds[i]);
-                }
-                else
-                {
+                } else {
                     oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
                 }
             }
-            oql.append(Util.getOrderByStr("", tigerClass));
-            Query query = session.createQuery(oql.toString());
-            for (int i = 0; i < par.getSize(); i++)
-            {
+            String orderByStr = Util.getOrderByStr("", tigerClass);
+            oql.append(orderByStr);
 
-                query.setParameter(filds[i],
-                        Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
-            }
-            List<Object> list = query.list();
-            session.close();
-            //如果是集合类型目前只拓展 List其他的Map之类后续拓展
-            if (java.util.Collection.class.isAssignableFrom(method.getParameterType()))
-            {
-                return list;
-            }
-            else
-            {
-                return (list == null || list.size() == 0 ? null : list.get(0));
-            }
-        }
-        else
-        {
-            Session session = sessionFactory.openSession();
-            String[] filds = par.getFilds();
-            Object[] values = par.getValues();
-            StringBuilder oql = new StringBuilder();
+        } else {
             oql.append("FROM ").append(tigerClass.getName()).append(" e where 1 = 1");
-            for (int i = 0; i < par.getSize(); i++)
-            {
+            for (int i = 0; i < par.getSize(); i++) {
 
                 java.lang.annotation.Annotation annotation =
                         Util.getAnnotation(tigerClass, filds[i], FindKey.class);
                 FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
-                if (findKey != null)
-                {
+                if (findKey != null) {
                     oql.append(" AND ").append(filds[i]).append(" " + findKey.selectType() + " :").append(
                             filds[i]);
-                }
-                else
-                {
+                } else {
                     oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
                 }
             }
             oql.append(Util.getOrderByStr("", tigerClass));
-            Query query = session.createQuery(oql.toString());
-            for (int i = 0; i < par.getSize(); i++)
-            {
-                query.setParameter(filds[i],
+
+        }
+        boolean isPageList = (java.util.Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
+        if (isPageList) {
+            String pageCountSQL = pageIntefac.getPageCountSQL(oql.toString());
+
+            Query countQuery = session.createQuery(pageCountSQL);
+            for (int i = 0; i < par.getSize(); i++) {
+                countQuery.setParameter(filds[i],
                         Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
             }
-            List<Object> list = query.list();
-            session.close();
-            //如果是集合类型目前只拓展 List其他的Map之类后续拓展
-            if (java.util.Collection.class.isAssignableFrom(method.getParameterType()))
-            {
-                return list;
+            List list = countQuery.list();
+            Integer max = null;
+            if (list == null || list.size() == 0) max = 0;
+            else {
+                max = Integer.parseInt(String.valueOf(list.get(0)));
             }
-            else
-            {
-                return (list == null || list.size() == 0 ? null : list.get(0));
+            java.lang.annotation.Annotation annotation = Util.getAnnotation(method.getMethod(), Page.class);
+            Page temp = annotation instanceof Page ? (Page) annotation : null;
+            PageInfo page = new PageInfo();
+            page.setPageCount(temp.defaultCount());
+            PageInfo pageInfo = Util.initPageInfo(request, page);
+            if (pageInfo.getPageNo() == null) {
+                pageInfo.setPageNo(1);
             }
+            //设置最大数据量信息
+            pageInfo.setMaxCount(max);
+            //设置最大页信息，如果max 为0 对应为0
+            pageInfo.setMaxPage(max != 0 ? (max % pageInfo.getPageCount() == 0 ? max / pageInfo.getPageCount() : 1 + (max / pageInfo.getPageCount())) : 0);
+            //得到转换之后的分页查询语句，由于可能会出现以后不适用hibernate 所以这里不使用 hibernate的分页
+            //query = session.createQuery(pageIntefac.getPageListSQL(oql.toString(), pageInfo));
+            //hibernate 不是识别LIMIT 语句 这里分页做出调整
+            query = session.createQuery(oql.toString()).setFirstResult((pageInfo.getPageNo() - 1) * pageInfo.getPageCount()).setMaxResults(pageInfo.getPageCount());
+        } else {
+            query = session.createQuery(oql.toString());
+        }
+
+        for (int i = 0; i < par.getSize(); i++) {
+            query.setParameter(filds[i],
+                    Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
+        }
+        List<Object> list = query.list();
+        session.close();
+        //如果是集合类型目前只拓展 List其他的Map之类后续拓展
+        if (java.util.Collection.class.isAssignableFrom(method.getParameterType())) {
+            return list;
+        } else {
+            return (list == null || list.size() == 0 ? null : list.get(0));
         }
     }
 
 
-    private Object FindDTOEntity(HttpServletRequest request, Annotation type,
-                                 Class tigerClass, MethodParameter method) throws Exception
-    {
-        return null;
+    private Object FindDTOEntity(HttpServletRequest request,
+                                 Class tigerClass, Find find, MethodParameter method) throws Exception {
+        String entityClass = find.entityClass();
+        Class<?> forName = Class.forName(entityClass);
+        InitMsg par = Util.initValue(request, Util.getParment(tigerClass), method);
+        Session session = sessionFactory.openSession();
+        String[] filds = par.getFilds();
+        Object[] values = par.getValues();
+        StringBuilder oql = new StringBuilder();
+        Query query = null;
+        if (par.isId()) //如果是id查询
+        {
+            oql.append("FROM ").append(forName.getName()).append(" e where 1 = 1");
+            for (int i = 0; i < par.getSize(); i++) {
+                oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
+            }
+            String orderByStr = Util.getOrderByStr("", tigerClass);
+            oql.append(orderByStr);
+        } else if (par.isIskeys()) {
+            oql.append("FROM ").append(forName.getName()).append(" e where 1 = 1");
+            for (int i = 0; i < par.getSize(); i++) {
+                java.lang.annotation.Annotation annotation =
+                        Util.getAnnotation(tigerClass, filds[i], FindKey.class);
+                FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
+                if (findKey != null) {
+                    oql.append(" AND ").append(filds[i]).append(" " + findKey.selectType() + " :").append(
+                            filds[i]);
+                } else {
+                    oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
+                }
+            }
+            String orderByStr = Util.getOrderByStr("", tigerClass);
+            oql.append(orderByStr);
+
+        } else {
+            oql.append("FROM ").append(forName.getName()).append(" e where 1 = 1");
+            for (int i = 0; i < par.getSize(); i++) {
+
+                java.lang.annotation.Annotation annotation =
+                        Util.getAnnotation(tigerClass, filds[i], FindKey.class);
+                FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
+                if (findKey != null) {
+                    oql.append(" AND ").append(filds[i]).append(" " + findKey.selectType() + " :").append(
+                            filds[i]);
+                } else {
+                    oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
+                }
+            }
+            oql.append(Util.getOrderByStr("", tigerClass));
+
+        }
+        //必须是List 而且还拥有Page注解才走分页操作
+        boolean isPageList = (java.util.Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
+        if (isPageList) {
+            String pageCountSQL = pageIntefac.getPageCountSQL(oql.toString());
+            Query countQuery = session.createQuery(pageCountSQL);
+            for (int i = 0; i < par.getSize(); i++) {
+                countQuery.setParameter(filds[i],
+                        Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
+            }
+            List list = countQuery.list();
+            Integer max = null;
+            if (list == null || list.size() == 0) max = 0;
+            else {
+                max = (Integer) list.get(0);
+            }
+            java.lang.annotation.Annotation annotation = Util.getAnnotation(method.getMethod(), method.getMethod().getDeclaringClass());
+            Page temp = annotation instanceof Page ? (Page) annotation : null;
+            PageInfo page = new PageInfo();
+            page.setPageCount(temp.defaultCount());
+            PageInfo pageInfo = Util.initPageInfo(request, page);
+            //设置最大数据量信息
+            pageInfo.setMaxCount(max);
+            //设置最大页信息，如果max 为0 对应为0
+            pageInfo.setMaxPage(max != 0 ? (max % pageInfo.getPageCount() == 0 ? max / pageInfo.getPageCount() : 1 + (max / pageInfo.getPageCount())) : 0);
+            request.setAttribute(Cost.PAGE_ATTR_NAME, pageInfo);
+            //得到转换之后的分页查询语句，由于可能会出现以后不适用hibernate 所以这里不使用 hibernate的分页
+            query = session.createQuery(oql.toString()).setFirstResult((pageInfo.getPageNo() - 1) * pageInfo.getPageCount()).setMaxResults(pageInfo.getPageCount());
+        } else {
+            query = session.createQuery(oql.toString());
+        }
+
+        for (int i = 0; i < par.getSize(); i++) {
+            query.setParameter(filds[i],
+                    Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
+        }
+        List<Object> list = query.list();
+        session.close();
+        //如果是集合类型目前只拓展 List其他的Map之类后续拓展
+        if (java.util.Collection.class.isAssignableFrom(method.getParameterType())) {
+            return list;
+        } else {
+            return (list == null || list.size() == 0 ? null : list.get(0));
+        }
     }
 
-    private Object FindOQLEntity(HttpServletRequest request, Annotation type,
-                                 Class tigerClass, MethodParameter method) throws Exception
-    {
-        return null;
+    private Object FindOQLEntity(HttpServletRequest request, Find find,
+                                 Class tigerClass, MethodParameter method) throws Exception {
+        InitMsg par = Util.initValue(request, Util.getParment(tigerClass), method);
+        Session session = sessionFactory.openSession();
+        String[] filds = par.getFilds();
+        Object[] values = par.getValues();
+        StringBuilder oql = new StringBuilder();
+        Query query = null;
+        if (par.isId()) //如果是id查询
+        {
+            oql.append(find.OQL()).append("  where 1 = 1");
+            for (int i = 0; i < par.getSize(); i++) {
+                oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
+            }
+            String orderByStr = Util.getOrderByStr("", tigerClass);
+            oql.append(orderByStr);
+        } else if (par.isIskeys()) {
+            oql.append(find.OQL()).append("  where 1 = 1");
+            for (int i = 0; i < par.getSize(); i++) {
+                java.lang.annotation.Annotation annotation =
+                        Util.getAnnotation(tigerClass, filds[i], FindKey.class);
+                FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
+                if (findKey != null) {
+                    oql.append(" AND ").append(filds[i]).append(" " + findKey.selectType() + " :").append(
+                            filds[i]);
+                } else {
+                    oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
+                }
+            }
+            String orderByStr = Util.getOrderByStr("", tigerClass);
+            oql.append(orderByStr);
+
+        } else {
+            oql.append(find.OQL()).append("  where 1 = 1");
+            for (int i = 0; i < par.getSize(); i++) {
+                java.lang.annotation.Annotation annotation =
+                        Util.getAnnotation(tigerClass, filds[i], FindKey.class);
+                FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
+                if (findKey != null) {
+                    oql.append(" AND ").append(filds[i]).append(" " + findKey.selectType() + " :").append(
+                            filds[i]);
+                } else {
+                    oql.append(" AND ").append(filds[i]).append("=:").append(filds[i]);
+                }
+            }
+            oql.append(Util.getOrderByStr("", tigerClass));
+
+        }
+        //必须是List 而且还拥有Page注解才走分页操作
+        boolean isPageList = (java.util.Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
+        if (isPageList) {
+            String pageCountSQL = pageIntefac.getPageCountSQL(oql.toString());
+            Query countQuery = session.createQuery(pageCountSQL);
+            for (int i = 0; i < par.getSize(); i++) {
+                countQuery.setParameter(filds[i],
+                        Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
+            }
+            List list = countQuery.list();
+            Integer max = null;
+            if (list == null || list.size() == 0) max = 0;
+            else {
+                max = (Integer) list.get(0);
+            }
+            java.lang.annotation.Annotation annotation = Util.getAnnotation(method.getMethod(), method.getMethod().getDeclaringClass());
+            Page temp = annotation instanceof Page ? (Page) annotation : null;
+            PageInfo page = new PageInfo();
+            page.setPageCount(temp.defaultCount());
+            PageInfo pageInfo = Util.initPageInfo(request, page);
+            //设置最大数据量信息
+            pageInfo.setMaxCount(max);
+            //设置最大页信息，如果max 为0 对应为0
+            pageInfo.setMaxPage(max != 0 ? (max % pageInfo.getPageCount() == 0 ? max / pageInfo.getPageCount() : 1 + (max / pageInfo.getPageCount())) : 0);
+            request.setAttribute(Cost.PAGE_ATTR_NAME, pageInfo);
+            //得到转换之后的分页查询语句，由于可能会出现以后不适用hibernate 所以这里不使用 hibernate的分页
+            query = session.createQuery(oql.toString()).setFirstResult((pageInfo.getPageNo() - 1) * pageInfo.getPageCount()).setMaxResults(pageInfo.getPageCount());
+        } else {
+            query = session.createQuery(oql.toString());
+        }
+
+        for (int i = 0; i < par.getSize(); i++) {
+            query.setParameter(filds[i],
+                    Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
+        }
+        List<Object> list = query.list();
+        session.close();
+        //如果是集合类型目前只拓展 List其他的Map之类后续拓展
+        if (java.util.Collection.class.isAssignableFrom(method.getParameterType())) {
+            return list;
+        } else {
+            return (list == null || list.size() == 0 ? null : list.get(0));
+        }
     }
 
-    private Object FindSQLEntity(HttpServletRequest request, Annotation type,
-                                 Class tigerClass, MethodParameter method) throws Exception
-    {
-        return null;
+    private Object FindSQLEntity(HttpServletRequest request, Find find,
+                                 Class tigerClass, MethodParameter method) throws Exception {
+        BaseDaoImlp baseDaoImlp  =new BaseDaoImlp(sessionFactory);
+        String entityClass = find.entityClass();
+        Class<?> forName = Class.forName(entityClass);
+        InitMsg par = Util.initValue(request, Util.getParment(tigerClass), method);
+        Session session = sessionFactory.openSession();
+        String[] filds = par.getFilds();
+        Object[] values = par.getValues();
+        StringBuilder oql = new StringBuilder();
+        SQLQuery query = null;
+        if (par.isId()) //如果是id查询
+        {
+            oql.append(find.SQL()).append("  where 1 = 1");
+            for (int i = 0; i < par.getSize(); i++) {
+                java.lang.annotation.Annotation annotation2 =
+                                    Util.getAnnotation(tigerClass, filds[i], Cell.class);
+                            Cell cell = (annotation2 instanceof Cell) ? (Cell) annotation2 : null;
+                            String asName = cell == null ? filds[i] : cell.columnName();
+                oql.append(" AND ").append(asName).append("=:").append(asName);
+            }
+            String orderByStr = Util.getOrderByStr("", tigerClass);
+            oql.append(orderByStr);
+        } else if (par.isIskeys()) {
+            oql.append(find.SQL()).append("  where 1 = 1");
+            for (int i = 0; i < par.getSize(); i++) {
+                java.lang.annotation.Annotation annotation =
+                        Util.getAnnotation(tigerClass, filds[i], FindKey.class);
+                FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
+
+                java.lang.annotation.Annotation annotation2 =
+                        Util.getAnnotation(tigerClass, filds[i], Cell.class);
+                Cell cell = (annotation2 instanceof Cell) ? (Cell) annotation2 : null;
+                String asName = cell == null ? filds[i] : cell.columnName();
+                if (findKey != null) {
+                    oql.append(" AND ").append(asName).append(" " + findKey.selectType() + " :").append(
+                            asName);
+                } else {
+                    oql.append(" AND ").append(asName).append("=:").append(asName);
+                }
+            }
+            String orderByStr = Util.getOrderByStr("", tigerClass);
+            oql.append(orderByStr);
+
+        } else {
+            oql.append(find.SQL()).append("  where 1 = 1");
+            for (int i = 0; i < par.getSize(); i++) {
+                java.lang.annotation.Annotation annotation =
+                        Util.getAnnotation(tigerClass, filds[i], FindKey.class);
+                FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
+                java.lang.annotation.Annotation annotation2 =
+                        Util.getAnnotation(tigerClass, filds[i], Cell.class);
+                Cell cell = (annotation2 instanceof Cell) ? (Cell) annotation2 : null;
+                String asName = cell == null ? filds[i] : cell.columnName();
+                if (findKey != null) {
+                    oql.append(" AND ").append(asName).append(" " + findKey.selectType() + " :").append(
+                            asName);
+                } else {
+                    oql.append(" AND ").append(asName).append("=:").append(asName);
+                }
+            }
+            oql.append(Util.getOrderByStr("", tigerClass));
+
+        }
+        //必须是List 而且还拥有Page注解才走分页操作
+        boolean isPageList = (java.util.Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
+        if (isPageList) {
+            String pageCountSQL = pageIntefac.getPageCountSQL(oql.toString());
+            Query countQuery = session.createSQLQuery(pageCountSQL);
+            for (int i = 0; i < par.getSize(); i++) {
+                java.lang.annotation.Annotation annotation2 =
+                                      Util.getAnnotation(tigerClass, filds[i], Cell.class);
+                              Cell cell = (annotation2 instanceof Cell) ? (Cell) annotation2 : null;
+                              String asName = cell == null ? filds[i] : cell.columnName();
+                countQuery.setParameter(asName,
+                        Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
+            }
+            List list = countQuery.list();
+            Integer max = null;
+            if (list == null || list.size() == 0) max = 0;
+            else {
+                max = (Integer) list.get(0);
+            }
+            java.lang.annotation.Annotation annotation = Util.getAnnotation(method.getMethod(), method.getMethod().getDeclaringClass());
+            Page temp = annotation instanceof Page ? (Page) annotation : null;
+            PageInfo page = new PageInfo();
+            page.setPageCount(temp.defaultCount());
+            PageInfo pageInfo = Util.initPageInfo(request, page);
+            //设置最大数据量信息
+            pageInfo.setMaxCount(max);
+            //设置最大页信息，如果max 为0 对应为0
+            pageInfo.setMaxPage(max != 0 ? (max % pageInfo.getPageCount() == 0 ? max / pageInfo.getPageCount() : 1 + (max / pageInfo.getPageCount())) : 0);
+            request.setAttribute(Cost.PAGE_ATTR_NAME, pageInfo);
+            //得到转换之后的分页查询语句，由于可能会出现以后不适用hibernate 所以这里不使用 hibernate的分页
+            query = session.createSQLQuery(pageIntefac.getPageListSQL(oql.toString(),pageInfo));
+        } else {
+            query = session.createSQLQuery(oql.toString());
+        }
+        Map<String,Object> valueMap =new HashMap<>();
+        for (int i = 0; i < par.getSize(); i++) {
+            java.lang.annotation.Annotation annotation2 =
+                                                  Util.getAnnotation(tigerClass, filds[i], Cell.class);
+                                          Cell cell = (annotation2 instanceof Cell) ? (Cell) annotation2 : null;
+                                          String asName = cell == null ? filds[i] : cell.columnName();
+            valueMap.put(asName,Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
+            query.setParameter(asName,
+                    Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
+        }
+
+        List<Object> list  = baseDaoImlp.getListBySQL(oql.toString(), tigerClass, valueMap);
+        session.close();
+        //如果是集合类型目前只拓展 List其他的Map之类后续拓展
+        if (java.util.Collection.class.isAssignableFrom(method.getParameterType())) {
+            return list;
+        } else {
+            return (list == null || list.size() == 0 ? null : list.get(0));
+        }
     }
 
     /**
@@ -224,8 +490,7 @@ public class DataBindUnit
      * @throws Exception
      */
     private Object SaveEntity(HttpServletRequest request,
-                              Class tigerClass, MethodParameter method) throws Exception
-    {
+                              Class tigerClass, MethodParameter method) throws Exception {
         InitMsg par = Util.initValueForSave(request, Util.getParment(tigerClass), method);
         Session session = sessionFactory.openSession();
         String[] filds = par.getFilds();
@@ -235,58 +500,49 @@ public class DataBindUnit
         java.lang.annotation.Annotation annotation =
                 Util.getClassAnnotation(tigerClass, Verify.class);
         Verify verify = (annotation instanceof Verify) ? (Verify) annotation : null;
-        for (int i = 0; i < par.getSize(); i++)
-        {
-            for (Field field : tigerClass.getDeclaredFields())
-            {
-                if (field.getName().equals(filds[i]))
-                {
+        for (int i = 0; i < par.getSize(); i++) {
+            for (Field field : tigerClass.getDeclaredFields()) {
+                if (field.getName().equals(filds[i])) {
                     Util.setData(field, values[i], et);
                 }
             }
         }
         boolean isPass = true;
         //如果有这个注解说明需要 校验外部方法
-        if (verify != null)
-        {
+        if (verify != null) {
             String classPath = verify.classPath();
             Class aClass = null;
-            try
-            {
+            try {
                 //找到校验的类
                 aClass = Class.forName(classPath);
-            }
-            catch (ClassNotFoundException e)
-            {//类没有找到不匹配}
+            } catch (ClassNotFoundException e) {//类没有找到不匹配}
             }
             //使用springde 容器代理生成对象。这样可以实现依赖注入
             Object bean = ApplicationContextUtil.getApplicationContext().getBean(aClass);
-            for (Method methods : aClass.getDeclaredMethods())
-            {
-                   //找到需要代理的方法
-                if (methods.getName().equals(verify.MethodName()))
-                {
+            for (Method methods : aClass.getDeclaredMethods()) {
+                //找到需要代理的方法
+                if (methods.getName().equals(verify.MethodName())) {
                     //代理执行验证方法。原则上这个方法会返回一个 boolean值
                     isPass = (boolean) methods.invoke(bean, et);
                 }
             }
-           // Method declaredMethod = aClass.getDeclaredMethod(verify.MethodName());
-           // isPass = (boolean) declaredMethod.invoke(bean, et);
+            // Method declaredMethod = aClass.getDeclaredMethod(verify.MethodName());
+            // isPass = (boolean) declaredMethod.invoke(bean, et);
         }
         //如果外部方法已经通过验证这验证必填的字段
-        if (isPass)
-        {
+        if (isPass) {
             isPass = CheckUtil.checkFiled(et, tigerClass);
         }
         // Method m1 = tigerClass.getDeclaredMethod(verify.MethodName());
         //issave = (boolean) m1.invoke(et);
-        if (isPass)
-        {//检查通过存储
-            Session s = sessionFactory.openSession();
-            s.save(et);
+        if (isPass) {//检查通过存储
+            session.save(et);
             session.close();
-            return issave;
+            return et;
         }
-        return issave;
+        if (session.isOpen()) {
+            session.close();
+        }
+        return et;
     }
 }

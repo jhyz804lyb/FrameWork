@@ -5,9 +5,9 @@ import org.bytedeco.javacpp.opencv_core.*;
 import org.opencv.core.*;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import java.io.*;
 import java.util.*;
@@ -24,12 +24,20 @@ import static org.opencv.highgui.Highgui.CV_LOAD_IMAGE_GRAYSCALE;
  */
 public final class FaceUtil
 {
+    static
+    {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        try
+        {
+            FaceUtil.initCreateFaces();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     private static final String TAG = "FaceUtil";
-
-    private FaceUtil()
-    {
-    }
 
     /**
      * 特征保存
@@ -45,11 +53,10 @@ public final class FaceUtil
         Mat grayMat = new Mat();
         Imgproc.cvtColor(image, grayMat, Imgproc.COLOR_BGR2GRAY);
         // 把检测到的人脸重新定义大小后保存成文件
-        Mat sub = grayMat.submat(rect);
-        Mat mat = new Mat();
-        Size size = new Size(100, 100);
-        Imgproc.resize(sub, mat, size);
-        return Highgui.imwrite(Cost.baseImageUrl, mat);
+      //  Mat sub = grayMat.submat(rect);
+       // Mat mat = new Mat();
+       // Imgproc.resize(sub, mat, rect.size());
+        return Highgui.imwrite(fileName, grayMat);
     }
 
     /**
@@ -110,6 +117,7 @@ public final class FaceUtil
         {
             String pathFile1 = getFilePath(fileName1);
             String pathFile2 = getFilePath(fileName2);
+            if (pathFile1 == null || pathFile2 == null) return 0.00;
             IplImage image1 = cvLoadImage(pathFile1, CV_LOAD_IMAGE_GRAYSCALE);
             IplImage image2 = cvLoadImage(pathFile2, CV_LOAD_IMAGE_GRAYSCALE);
             if (null == image1 || null == image2)
@@ -162,32 +170,35 @@ public final class FaceUtil
         return fileName;
     }
 
-    /***
-     *  图片对比
+    /**
+     * 图片对比
+     *
      * @param fileName
      * @return
      */
-    public static List<Map<String, String>> compareAll(String fileName)
+    public static List<Map<String, String>> compareAll(String fileName) throws IOException
     {
         String pathFile1 = getFilePath(fileName);
+        createFaceImg(new File(fileName),Cost.TEMP_IMG);
         List<Map<String, String>> result = new ArrayList<>();
-
-        File file = new File(Cost.baseImageUrl);
+        File file = new File(Cost.TEMP_IMG_URL);
         if (file.exists() && file.isDirectory())
         {
-            Map<String, String> map = new HashMap<String, String>();
             for (File item : file.listFiles())
             {
+                Map<String, String> map = new HashMap<String, String>();
                 map.put("imagePath", item.getAbsolutePath());
                 double compare = compare(fileName, item.getAbsolutePath());
                 map.put("result", String.valueOf(compare));
+                result.add(map);
             }
         }
-        return result;
+        return sort(result);
     }
 
     /**
      * 图片入库
+     *
      * @param filePath
      * @return
      * @throws IOException
@@ -218,6 +229,7 @@ public final class FaceUtil
 
     /**
      * 得到人脸库中的人脸照片个数
+     *
      * @return
      */
     public static Integer faceImgSize()
@@ -232,6 +244,7 @@ public final class FaceUtil
 
     /**
      * 按得分排序
+     *
      * @param listSize
      * @return
      */
@@ -244,7 +257,7 @@ public final class FaceUtil
             {
                 Map<String, String> temp1 = listSize.get(j);
                 Map<String, String> temp2 = listSize.get(j + 1);
-                if (Double.parseDouble(temp1.get("result")) > Double.parseDouble(temp2.get("result")))
+                if (Double.parseDouble(temp1.get("result")) < Double.parseDouble(temp2.get("result")))
                 {
                     listSize.set(j + 1, temp1);
                     listSize.set(j, temp2);
@@ -256,11 +269,12 @@ public final class FaceUtil
 
     /**
      * 图片中的人脸是否已经在人脸库中
+     *
      * @param filePath
      * @param maxScore
      * @return
      */
-    public static boolean isFaceExist(String filePath, Double maxScore)
+    public static boolean isFaceExist(String filePath, Double maxScore) throws IOException
     {
         List<Map<String, String>> maps = compareAll(filePath);
         maps = sort(maps);
@@ -272,5 +286,79 @@ public final class FaceUtil
             }
         }
         return false;
+    }
+
+    public static String createFaceImg(String faceImg) throws IOException
+    {
+        File file = new File(Cost.TEMP_IMG_URL);
+        if (!file.exists())
+        {
+            file.createNewFile();
+        }
+        Date time = new Date();
+        String fileName =
+                Cost.TEMP_IMG_URL + "\\" + String.valueOf(time.getTime()) + "-" + (int) Math.random() * 10000 + ".jpg";
+        //加载人脸算法
+        CascadeClassifier faceDetector = new CascadeClassifier(Cost.FACE_DATA_CONFIG);
+        Mat image = Highgui.imread(faceImg);
+        MatOfRect faceDetections = new MatOfRect();
+        faceDetector.detectMultiScale(image, faceDetections);
+        for (Rect rect : faceDetections.toArray())
+        {
+            Mat roi_img = new Mat(image, rect);
+            Mat tmp_img = new Mat();
+            roi_img.copyTo(tmp_img);
+            Highgui.imwrite(fileName, tmp_img);
+        }
+        return faceDetections.toArray().length > 0 ? fileName : null;
+    }
+
+    public static void initCreateFaces() throws IOException
+    {
+        File file = new File(Cost.baseImageUrl);
+        if (file.exists() && file.isDirectory())
+        {
+            File file3 = new File(Cost.TEMP_IMG_URL);
+            if(file3.exists() && file3.isDirectory()&&file3.listFiles().length>0) return ;
+            for (File item : file.listFiles())
+            {
+                if (item.isFile())
+                    createFaceImg(item);
+            }
+        }
+    }
+
+    /**
+     * 识别照片中的人脸，并生成行的人脸图保存在默认路径
+     * @param file
+     * @throws IOException
+     */
+    public static void createFaceImg(File file) throws IOException
+    {
+        createFaceImg(file, Cost.TEMP_IMG_URL);
+    }
+
+    /**
+     * 识别照片中的人脸，并生成行的人脸图保存在指定路径
+     * @param file 照片文件
+     * @param basePath 生成人脸后照片的保存路径
+     * @throws IOException
+     */
+    public static void createFaceImg(File file, String basePath) throws IOException
+    {
+        String fileName = basePath + "\\" + file.getName();
+        //加载人脸算法
+        CascadeClassifier faceDetector = new CascadeClassifier(Cost.FACE_DATA_CONFIG);
+        //生成图片
+        Mat image = Highgui.imread(file.getAbsolutePath());
+        MatOfRect faceDetections = new MatOfRect();
+        faceDetector.detectMultiScale(image, faceDetections);
+        for (Rect rect : faceDetections.toArray())
+        {
+            Mat roi_img = new Mat(image, rect);
+            Mat tmp_img = new Mat();
+            roi_img.copyTo(tmp_img);
+            saveImage(tmp_img, rect, fileName);
+        }
     }
 }
