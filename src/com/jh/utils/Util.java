@@ -29,7 +29,7 @@ public class Util {
             return Annotation.FIND;
         else if (type.equals(Delete.class))
             return Annotation.DELETE;
-        else if (type.equals(Save.class))
+        else if (type.equals(SaveOrUpdate.class))
             return Annotation.UPDATE;
         return null;
     }
@@ -272,6 +272,17 @@ public class Util {
         return null;
     }
 
+    public static String getParameterValue(HttpServletRequest request, String fieldName) {
+        Enumeration<String> parameters = request.getParameterNames();
+        while (parameters.hasMoreElements()) {
+            String name = parameters.nextElement();
+            if (fieldName.equals(name)) {
+                return request.getParameter(name);
+            }
+        }
+        return null;
+    }
+
 
     public static String getParameterValue(HttpServletRequest request, Field field) {
         Enumeration<String> parameters = request.getParameterNames();
@@ -331,46 +342,47 @@ public class Util {
         }
         return data;
     }
+
     public static Object puserStringToObject(Field filed, String data) throws ParseException {
-           if (filed.getType().equals(java.lang.String.class)) {
-               return data;
-           } else if (filed.getType().equals(java.lang.Integer.class)
-                   || filed.getType().toString().trim().equals("int")) {
-               return Integer.parseInt(data);
-           } else if (filed.getType().equals(java.lang.Long.class)
-                   || filed.getType().toString().trim().equals("long"))
-               return Long.parseLong(data);
-           else if (filed.getType().equals(java.lang.Double.class)
-                   || filed.getType().toString().trim().equals("double"))
-               return Double.parseDouble(data);
-           else if (filed.getType().equals(java.lang.Float.class)
-                   || filed.getType().toString().trim().equals("float"))
-               return Float.parseFloat(data);
-           if (filed.getType().equals(java.lang.Short.class)
-                   || filed.getType().toString().trim().equals("short"))
-               return Short.parseShort(data);
-           if (filed.getType().equals(java.lang.Byte.class)
-                   || filed.getType().toString().trim().equals("byte"))
-               return Byte.parseByte(data);
-           if (filed.getType().equals(java.lang.Character.class)
-                   || filed.getType().toString().trim().equals("char"))
-               return Integer.parseInt(data);
-           if (filed.getType().equals(java.lang.Boolean.class)
-                   || filed.getType().toString().trim().equals("boolean"))
-               return Integer.parseInt(data);
-           else if (filed.getType().equals(java.util.Date.class)) {
-               String realValue = getRealValue(data, 14);
-               SimpleDateFormat formatSecond = new SimpleDateFormat("yyyyMMddhhmmss".substring(0,realValue.length()));
-               Date parse = formatSecond.parse(realValue);
-               return parse;
-           } else if (filed.getType().equals(java.sql.Date.class)) {
-               String realValue = getRealValue(data, 8);
-               SimpleDateFormat formatSecond = new SimpleDateFormat("yyyyMMdd".substring(0,realValue.length()));
-               Date parse = formatSecond.parse(realValue);
-               return parse;
-           }
-           return data;
-       }
+        if (filed.getType().equals(java.lang.String.class)) {
+            return data;
+        } else if (filed.getType().equals(java.lang.Integer.class)
+                || filed.getType().toString().trim().equals("int")) {
+            return Integer.parseInt(data);
+        } else if (filed.getType().equals(java.lang.Long.class)
+                || filed.getType().toString().trim().equals("long"))
+            return Long.parseLong(data);
+        else if (filed.getType().equals(java.lang.Double.class)
+                || filed.getType().toString().trim().equals("double"))
+            return Double.parseDouble(data);
+        else if (filed.getType().equals(java.lang.Float.class)
+                || filed.getType().toString().trim().equals("float"))
+            return Float.parseFloat(data);
+        if (filed.getType().equals(java.lang.Short.class)
+                || filed.getType().toString().trim().equals("short"))
+            return Short.parseShort(data);
+        if (filed.getType().equals(java.lang.Byte.class)
+                || filed.getType().toString().trim().equals("byte"))
+            return Byte.parseByte(data);
+        if (filed.getType().equals(java.lang.Character.class)
+                || filed.getType().toString().trim().equals("char"))
+            return Integer.parseInt(data);
+        if (filed.getType().equals(java.lang.Boolean.class)
+                || filed.getType().toString().trim().equals("boolean"))
+            return Integer.parseInt(data);
+        else if (filed.getType().equals(java.util.Date.class)) {
+            String realValue = getRealValue(data, 14);
+            SimpleDateFormat formatSecond = new SimpleDateFormat("yyyyMMddhhmmss".substring(0, realValue.length()));
+            Date parse = formatSecond.parse(realValue);
+            return parse;
+        } else if (filed.getType().equals(java.sql.Date.class)) {
+            String realValue = getRealValue(data, 8);
+            SimpleDateFormat formatSecond = new SimpleDateFormat("yyyyMMdd".substring(0, realValue.length()));
+            Date parse = formatSecond.parse(realValue);
+            return parse;
+        }
+        return data;
+    }
 
     public static String convernData(Field filed, Object data) throws ParseException {
         if (filed.getType().equals(java.lang.String.class)) {
@@ -582,7 +594,7 @@ public class Util {
         for (Field field : Fileds) {
             if (getParameterValue(request, method, field) != null) {
                 filds.add(field.getName());
-                vals.add(puserStringToObject(field,getParameterValue(request, method, field)));
+                vals.add(puserStringToObject(field, getParameterValue(request, method, field)));
                 size++;
             }
         }
