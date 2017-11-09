@@ -1,7 +1,8 @@
 package com.jh.common.config;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jh.Interceptor.Json;
+import com.jh.Interceptor.*;
+import com.jh.utils.Util;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -10,7 +11,9 @@ import org.springframework.web.method.support.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
-/**返回处理器
+/**
+ * 返回处理器
+ *
  * @author liyabin
  * @date 2017-08-22下午 5:31
  */
@@ -22,14 +25,14 @@ public class ReturnHandler implements HandlerMethodReturnValueHandler
     }
 
     /**
-     *
      * @param methodParameter
      * @return
      */
     @Override
     public boolean supportsReturnType(MethodParameter methodParameter)
     {
-        return methodParameter.getMethod().getAnnotation(Json.class)!=null;
+        return (methodParameter.getMethod().getAnnotation(Json.class) != null) ||
+                (methodParameter.getMethod().getAnnotation(ExportExcel.class) != null);
     }
 
     @Override
@@ -37,13 +40,20 @@ public class ReturnHandler implements HandlerMethodReturnValueHandler
                                   ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest)
             throws Exception
     {
+        if (methodParameter.getMethod().getAnnotation(ExportExcel.class) != null)
+        {
+           Util.ExportExcelFile(returnValue,Util.getClassByMethodParameter(methodParameter),nativeWebRequest.getNativeResponse(HttpServletResponse.class),methodParameter.getMethod().getAnnotation(ExportExcel.class));
+        }
         modelAndViewContainer.setRequestHandled(true);
         HttpServletResponse response = nativeWebRequest.getNativeResponse(HttpServletResponse.class);
         response.setContentType("text/json;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter())
+        {
             out.write(JSONObject.toJSONString(returnValue));
             out.flush();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw e;
         }
     }

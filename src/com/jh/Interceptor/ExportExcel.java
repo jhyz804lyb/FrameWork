@@ -8,8 +8,8 @@ import java.lang.annotation.*;
  * @date 2017/11/6
  */
 
-@Target(ElementType.PARAMETER)
-@Retention(RetentionPolicy.RUNTIME)
+@Target ( {ElementType.TYPE, ElementType.METHOD})
+@Retention (RetentionPolicy.RUNTIME)
 @Documented
 public @interface ExportExcel
 {
@@ -36,4 +36,10 @@ public @interface ExportExcel
      * @return
      */
     int [] cellWidth() default {-1};
+
+    /**
+     * 文件名称
+     * @return
+     */
+    String fileName() default "DEFINE_FILE_NAME";
 }

@@ -14,5 +14,5 @@ public @interface ImportExcel
 {
     String classPath();
     int [] cellArray() default {};
-    String []filedList();
+    String [] filedList();
 }

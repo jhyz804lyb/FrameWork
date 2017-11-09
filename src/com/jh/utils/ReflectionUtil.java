@@ -17,6 +17,18 @@ public class ReflectionUtil {
 
         return field.get(instance);
     }
+    /***
+     * 获取私有成员变量的值
+     *
+     */
+    public static Object getValue(Object instance,Class tigerClass, String fieldName)
+            throws IllegalAccessException, NoSuchFieldException {
+
+        Field field = tigerClass.getDeclaredField(fieldName);
+        field.setAccessible(true); // 参数值为true，禁止访问控制检查
+
+        return field.get(instance);
+    }
 
     /***
      * 设置私有成员变量的值
@@ -41,5 +53,11 @@ public class ReflectionUtil {
         Method method = instance.getClass().getDeclaredMethod(methodName, classes);
         method.setAccessible(true);
         return method.invoke(instance, objects);
+    }
+
+    public static Field getField(Class tigerClass, String fieldName) throws NoSuchFieldException
+    {
+        Field field = tigerClass.getDeclaredField(fieldName);
+        return field;
     }
 }
