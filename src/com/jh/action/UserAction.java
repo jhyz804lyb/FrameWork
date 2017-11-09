@@ -123,7 +123,7 @@ public class UserAction
 
     @RequestMapping(value = "excelFile")
     @ExportExcel(titleList = {"比赛名称","比赛时间","状态","主队","客队","结果"}
-            ,fieldList = {"matchName","matchTime","state","homeTeam","guestTeam","result"},fileName = "框架导出测试")
+            ,fieldList = {"matchName","matchTime","state","homeTeam","guestTeam","result"},fileName = "框架导出测试",cellWidth = {5,5,5,5,5,5})
     @Page
     public List<Match> exportFile(@Find List<Match> matchs)
     {

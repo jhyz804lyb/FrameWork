@@ -817,6 +817,7 @@ public class Util
             throws Exception
     {
         String fileName = null;
+        int cell_Height = exportExcel.cellHeight();
         if (tigerClass == null) return false;
         //得到文件名的操作
         if (ExcelInfo.class.isAssignableFrom(tigerClass)&&!Cost.EXCEL_NO_DEFINE_FILENAME.equals(exportExcel.fileName()))
@@ -870,7 +871,7 @@ public class Util
             dataList.add(temp);
         }
         ExcelUtil
-                .ExportFile(ExcelUtil.getWorkBook(), titleList, dataList, paramHttpServletResponse, fileName, dateType);
+                .ExportFile(ExcelUtil.getWorkBook(), titleList, dataList, paramHttpServletResponse, fileName, dateType,exportExcel.cellWidth(),cell_Height);
         return true;
     }
 

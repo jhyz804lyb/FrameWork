@@ -435,6 +435,117 @@ public class ExcelUtil
      */
     public static void ExportFile(SXSSFWorkbook Workbook, List<String> titleList,
                                   List<Object[]> dataList, HttpServletResponse response,
+                                  String fileName, int[] dataType, int[] cellWidth, int cell_Height)
+    {
+        ServletOutputStream localServletOutputStream = null;
+        try
+        {
+            localServletOutputStream = response.getOutputStream();
+            Sheet localHSSFSheet = Workbook.createSheet();
+            Workbook.setSheetName(0, fileName);
+            Row localHSSFRow1 = localHSSFSheet.createRow(0);
+            Row localHSSFRow2 = null;
+            localHSSFSheet.createFreezePane(0, 1);
+            localHSSFRow1.setHeight((short) (100 * cell_Height));
+            CellStyle titlestyle = getTitleStyle(Workbook);
+            CellStyle bodystyle = getbodyStyle(Workbook);
+            int i = 0;
+            int j = titleList.size();
+            for (int index = 0; index < j; index++)
+            {
+                //localHSSFSheet.autoSizeColumn(index, true);
+                if (cellWidth != null && cellWidth.length == j)
+                    localHSSFSheet.setColumnWidth(index, 1000 * cellWidth[index]);
+                else
+                    localHSSFSheet.autoSizeColumn(index, true);
+
+            }//把列宽个设置为自动
+
+
+            for (String title : titleList)
+            {
+                createCell(titlestyle, localHSSFRow1, i, title, false);
+                i++;
+            }
+            i = 1;
+            j = dataList.size();
+            for (Object[] objs : dataList)
+            {
+                localHSSFRow2 = localHSSFSheet.createRow(i);
+                localHSSFRow2.setHeight((short) 400);
+                int count = 0;
+                for (Object obj : objs)
+                {
+                    if (dataType != null)
+                    {
+                        if (count < dataType.length && dataType[count] == NUMBER_TYPE)
+                        {
+                            createCell(bodystyle, localHSSFRow2, count, obj == null ? "" : obj.toString(),
+                                    isPreaseNumber(obj == null ? "" : obj.toString()) ? true : false);
+                        }
+                        else if (count < dataType.length && dataType[count] == STRING_TYPE)
+                        {
+                            createCell(bodystyle, localHSSFRow2, count, obj == null ? "" : obj.toString(), false);
+                        }
+                        else
+                        {
+                            createCell(bodystyle, localHSSFRow2, count, obj == null ? "" : obj.toString(), false);
+                        }
+                    }
+                    else
+                    {
+                        createCell(bodystyle, localHSSFRow2, count, obj == null ? "" : obj.toString(), false);
+                    }
+                    count++;
+                }
+                i++;
+            }
+            localServletOutputStream = response.getOutputStream();
+            response.reset();
+            response.addHeader("Content-Disposition", String.format("attachment;filename*=utf-8'zh_cn'%s.xls",
+                    new Object[]{URLEncoder.encode(fileName, "utf-8")}));
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("application/x-msdownload");
+            response.flushBuffer();
+            Workbook.write(localServletOutputStream);
+            localServletOutputStream.flush();
+            localServletOutputStream.close();
+            return;
+        }
+        catch (IOException localIOException1)
+        {
+
+        }
+        finally
+        {
+            try
+            {
+                localServletOutputStream.close();
+            }
+            catch (IOException localIOException4)
+            {
+
+            }
+        }
+
+
+    }
+
+    /**
+     * 导出优化<br>
+     * <br>
+     * 创建人： 李亚彬 <br>
+     * 创建时间： 2016年1月11日 下午1:32:26
+     * Copyright (c)2016 <br>
+     * * @param Workbook
+     * * @param titleList
+     * * @param dataList
+     * * @param response
+     * * @param fileName 文件名
+     * * @param dataType 类型标识数组，制定列是数字还是字符。 数组下标表示列，值决定是否数字(1:数字;0:字符)
+     */
+    public static void ExportFile(SXSSFWorkbook Workbook, List<String> titleList,
+                                  List<Object[]> dataList, HttpServletResponse response,
                                   String fileName, int[] dataType)
     {
         ServletOutputStream localServletOutputStream = null;
@@ -452,7 +563,8 @@ public class ExcelUtil
             int i = 0;
             int j = titleList.size();
             for (int index = 0; index < j; index++)//把列宽个设置为自动
-                localHSSFSheet.autoSizeColumn(index, true);
+                //localHSSFSheet.autoSizeColumn(index, true);
+                localHSSFSheet.setColumnWidth(index, 1000 * 10);
 
             for (String title : titleList)
             {
@@ -920,7 +1032,7 @@ public class ExcelUtil
 										}
 									}
 									break;*/
-								/* 此行表示单元格的内容为string类型 */
+                                /* 此行表示单元格的内容为string类型 */
                                     case HSSFCell.CELL_TYPE_STRING: // 字符串型
                                         value = cell.getRichStringCellValue().toString();
                                         break;
@@ -937,7 +1049,7 @@ public class ExcelUtil
                                     case HSSFCell.CELL_TYPE_BOOLEAN:// 布尔
                                         value = " " + cell.getBooleanCellValue();
                                         break;
-								/* 此行表示该单元格值为空 */
+                                /* 此行表示该单元格值为空 */
                                     case HSSFCell.CELL_TYPE_BLANK: // 空值
                                         value = " ";
                                         break;

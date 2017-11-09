@@ -42,4 +42,10 @@ public @interface ExportExcel
      * @return
      */
     String fileName() default "DEFINE_FILE_NAME";
+
+    /**
+     * 列高
+     * @return
+     */
+    int cellHeight()default 5;
 }
