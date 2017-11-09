@@ -15,4 +15,14 @@ public class StringUtils
     {
       return string==null||string.length()==0;
     }
+
+    /**
+     * 判断字符是否为空
+     * @param string 要判断的字符
+     * @return true 为空或者“” false 不为空
+     */
+    public static boolean isEmpty(String string)
+    {
+      return string==null||string.length()==0;
+    }
 }

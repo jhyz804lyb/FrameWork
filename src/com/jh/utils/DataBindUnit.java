@@ -25,8 +25,6 @@ public class DataBindUnit {
     @Autowired
     CreatePageInfoInteface pageIntefac;
 
-    BaseDao baseDao;
-
     public Object initData(HttpServletRequest request, Annotation type,
                            Class tigerClass, MethodParameter method) throws Exception {
         if (tigerClass == null)
@@ -159,7 +157,7 @@ public class DataBindUnit {
             oql.append(Util.getOrderByStr("", tigerClass));
 
         }
-        boolean isPageList = (java.util.Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
+        boolean isPageList = (Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
         if (isPageList) {
             String pageCountSQL = pageIntefac.getPageCountSQL(oql.toString());
 
@@ -172,15 +170,15 @@ public class DataBindUnit {
                     String start = Util.getParameterValue(request, between.startField());
                     String end = Util.getParameterValue(request, between.endField());
                     if (!StringUtils.isNull(start)) {
-                        query.setParameter(filds[i] + "_" + between.startField(),
+                        countQuery.setParameter(filds[i] + "_" + between.startField(),
                                 Util.parsueData(tigerClass.getDeclaredField(filds[i]), start));
                     }
                     if (!StringUtils.isNull(end)) {
-                        query.setParameter(filds[i] + "_" + between.endField(),
+                        countQuery.setParameter(filds[i] + "_" + between.endField(),
                                 Util.parsueData(tigerClass.getDeclaredField(filds[i]), end));
                     }
                 } else {
-                    query.setParameter(filds[i],
+                    countQuery.setParameter(filds[i],
                             Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
                 }
             }
@@ -234,7 +232,7 @@ public class DataBindUnit {
         List<Object> list = query.list();
         session.close();
         //如果是集合类型目前只拓展 List其他的Map之类后续拓展
-        if (java.util.Collection.class.isAssignableFrom(method.getParameterType())) {
+        if (Collection.class.isAssignableFrom(method.getParameterType())) {
             return list;
         } else {
             return (list == null || list.size() == 0 ? null : list.get(0));
@@ -316,7 +314,7 @@ public class DataBindUnit {
 
         }
         //必须是List 而且还拥有Page注解才走分页操作
-        boolean isPageList = (java.util.Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
+        boolean isPageList = (Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
         if (isPageList) {
             String pageCountSQL = pageIntefac.getPageCountSQL(oql.toString());
             Query countQuery = session.createQuery(pageCountSQL);
@@ -328,15 +326,15 @@ public class DataBindUnit {
                     String start = Util.getParameterValue(request, between.startField());
                     String end = Util.getParameterValue(request, between.endField());
                     if (!StringUtils.isNull(start)) {
-                        query.setParameter(filds[i] + "_" + between.startField(),
+                        countQuery.setParameter(filds[i] + "_" + between.startField(),
                                 Util.parsueData(tigerClass.getDeclaredField(filds[i]), start));
                     }
                     if (!StringUtils.isNull(end)) {
-                        query.setParameter(filds[i] + "_" + between.endField(),
+                        countQuery.setParameter(filds[i] + "_" + between.endField(),
                                 Util.parsueData(tigerClass.getDeclaredField(filds[i]), end));
                     }
                 } else {
-                    query.setParameter(filds[i],
+                    countQuery.setParameter(filds[i],
                             Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
                 }
 
@@ -387,7 +385,7 @@ public class DataBindUnit {
         List<Object> list = query.list();
         session.close();
         //如果是集合类型目前只拓展 List其他的Map之类后续拓展
-        if (java.util.Collection.class.isAssignableFrom(method.getParameterType())) {
+        if (Collection.class.isAssignableFrom(method.getParameterType())) {
             return list;
         } else {
             return (list == null || list.size() == 0 ? null : list.get(0));
@@ -465,7 +463,7 @@ public class DataBindUnit {
 
         }
         //必须是List 而且还拥有Page注解才走分页操作
-        boolean isPageList = (java.util.Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
+        boolean isPageList = (Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
         if (isPageList) {
             String pageCountSQL = pageIntefac.getPageCountSQL(oql.toString());
             Query countQuery = session.createQuery(pageCountSQL);
@@ -477,15 +475,15 @@ public class DataBindUnit {
                     String start = Util.getParameterValue(request, between.startField());
                     String end = Util.getParameterValue(request, between.endField());
                     if (!StringUtils.isNull(start)) {
-                        query.setParameter(filds[i] + "_" + between.startField(),
+                        countQuery.setParameter(filds[i] + "_" + between.startField(),
                                 Util.parsueData(tigerClass.getDeclaredField(filds[i]), start));
                     }
                     if (!StringUtils.isNull(end)) {
-                        query.setParameter(filds[i] + "_" + between.endField(),
+                        countQuery.setParameter(filds[i] + "_" + between.endField(),
                                 Util.parsueData(tigerClass.getDeclaredField(filds[i]), end));
                     }
                 } else {
-                    query.setParameter(filds[i],
+                    countQuery.setParameter(filds[i],
                             Util.parsueData(tigerClass.getDeclaredField(filds[i]), values[i].toString()));
                 }
             }
@@ -535,7 +533,7 @@ public class DataBindUnit {
         List<Object> list = query.list();
         session.close();
         //如果是集合类型目前只拓展 List其他的Map之类后续拓展
-        if (java.util.Collection.class.isAssignableFrom(method.getParameterType())) {
+        if (Collection.class.isAssignableFrom(method.getParameterType())) {
             return list;
         } else {
             return (list == null || list.size() == 0 ? null : list.get(0));
@@ -607,7 +605,7 @@ public class DataBindUnit {
 
         }
         //必须是List 而且还拥有Page注解才走分页操作
-        boolean isPageList = (java.util.Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
+        boolean isPageList = (Collection.class.isAssignableFrom(method.getParameterType()) && Util.isPageList(method));
         if (isPageList) {
             String pageCountSQL = pageIntefac.getPageCountSQL(oql.toString());
             Query countQuery = session.createSQLQuery(pageCountSQL);
@@ -640,7 +638,7 @@ public class DataBindUnit {
         } else {
             query = session.createSQLQuery(oql.toString());
         }
-        Map<String, Object> valueMap = new HashMap<>();
+        Map<String, Object> valueMap = new HashMap<String, Object>();
         for (int i = 0; i < par.getSize(); i++) {
             java.lang.annotation.Annotation annotation2 =
                     Util.getAnnotation(tigerClass, filds[i], Cell.class);
@@ -654,7 +652,7 @@ public class DataBindUnit {
         List<Object> list = baseDaoImlp.getListBySQL(oql.toString(), tigerClass, valueMap);
         session.close();
         //如果是集合类型目前只拓展 List其他的Map之类后续拓展
-        if (java.util.Collection.class.isAssignableFrom(method.getParameterType())) {
+        if (Collection.class.isAssignableFrom(method.getParameterType())) {
             return list;
         } else {
             return (list == null || list.size() == 0 ? null : list.get(0));
@@ -704,7 +702,7 @@ public class DataBindUnit {
                 //找到需要代理的方法
                 if (methods.getName().equals(verify.MethodName())) {
                     //代理执行验证方法。原则上这个方法会返回一个 boolean值
-                    isPass = (boolean) methods.invoke(bean, et);
+                    isPass = (Boolean) methods.invoke(bean, et);
                 }
             }
             // Method declaredMethod = aClass.getDeclaredMethod(verify.MethodName());
@@ -769,7 +767,7 @@ public class DataBindUnit {
                 //找到需要代理的方法
                 if (methods.getName().equals(verify.MethodName())) {
                     //代理执行验证方法。原则上这个方法会返回一个 boolean值
-                    isPass = (boolean) methods.invoke(bean, et);
+                    isPass = (Boolean) methods.invoke(bean, et);
                 }
             }
             // Method declaredMethod = aClass.getDeclaredMethod(verify.MethodName());
@@ -798,7 +796,7 @@ public class DataBindUnit {
         Object relust = initData(request, Annotation.FIND, tigerClass, method);
         EBase base = new EBase();
         if (relust != null) {
-            if (java.util.Collection.class.isAssignableFrom(method.getParameterType())) {
+            if (Collection.class.isAssignableFrom(method.getParameterType())) {
                 Transaction transaction = session.beginTransaction();
                 transaction.begin();
                 try {

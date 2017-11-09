@@ -299,7 +299,7 @@ public class Util {
 
 
     public static Object parsueData(Field filed, String data) throws ParseException {
-        if (filed.getType().equals(java.lang.String.class)) {
+        if (filed.getType().equals(String.class)) {
             java.lang.annotation.Annotation annotation =
                     Util.getAnnotation(filed, FindKey.class);
             FindKey findKey = (annotation instanceof FindKey) ? (FindKey) annotation : null;
@@ -307,31 +307,31 @@ public class Util {
                 return findKey.left() + data + findKey.right();
             }
             return data;
-        } else if (filed.getType().equals(java.lang.Integer.class)
+        } else if (filed.getType().equals(Integer.class)
                 || filed.getType().toString().trim().equals("int")) {
             return Integer.parseInt(data);
-        } else if (filed.getType().equals(java.lang.Long.class)
+        } else if (filed.getType().equals(Long.class)
                 || filed.getType().toString().trim().equals("long"))
             return Long.parseLong(data);
-        else if (filed.getType().equals(java.lang.Double.class)
+        else if (filed.getType().equals(Double.class)
                 || filed.getType().toString().trim().equals("double"))
             return Double.parseDouble(data);
-        else if (filed.getType().equals(java.lang.Float.class)
+        else if (filed.getType().equals(Float.class)
                 || filed.getType().toString().trim().equals("float"))
             return Float.parseFloat(data);
-        if (filed.getType().equals(java.lang.Short.class)
+        if (filed.getType().equals(Short.class)
                 || filed.getType().toString().trim().equals("short"))
             return Short.parseShort(data);
-        if (filed.getType().equals(java.lang.Byte.class)
+        if (filed.getType().equals(Byte.class)
                 || filed.getType().toString().trim().equals("byte"))
             return Byte.parseByte(data);
-        if (filed.getType().equals(java.lang.Character.class)
+        if (filed.getType().equals(Character.class)
                 || filed.getType().toString().trim().equals("char"))
             return Integer.parseInt(data);
-        if (filed.getType().equals(java.lang.Boolean.class)
+        if (filed.getType().equals(Boolean.class)
                 || filed.getType().toString().trim().equals("boolean"))
             return Integer.parseInt(data);
-        else if (filed.getType().equals(java.util.Date.class)) {
+        else if (filed.getType().equals(Date.class)) {
             SimpleDateFormat formatSecond = new SimpleDateFormat("yyyyMMddhhmmss");
             Date parse = formatSecond.parse(getRealValue(data, 14));
             return parse;
@@ -344,33 +344,33 @@ public class Util {
     }
 
     public static Object puserStringToObject(Field filed, String data) throws ParseException {
-        if (filed.getType().equals(java.lang.String.class)) {
+        if (filed.getType().equals(String.class)) {
             return data;
-        } else if (filed.getType().equals(java.lang.Integer.class)
+        } else if (filed.getType().equals(Integer.class)
                 || filed.getType().toString().trim().equals("int")) {
             return Integer.parseInt(data);
-        } else if (filed.getType().equals(java.lang.Long.class)
+        } else if (filed.getType().equals(Long.class)
                 || filed.getType().toString().trim().equals("long"))
             return Long.parseLong(data);
-        else if (filed.getType().equals(java.lang.Double.class)
+        else if (filed.getType().equals(Double.class)
                 || filed.getType().toString().trim().equals("double"))
             return Double.parseDouble(data);
-        else if (filed.getType().equals(java.lang.Float.class)
+        else if (filed.getType().equals(Float.class)
                 || filed.getType().toString().trim().equals("float"))
             return Float.parseFloat(data);
-        if (filed.getType().equals(java.lang.Short.class)
+        if (filed.getType().equals(Short.class)
                 || filed.getType().toString().trim().equals("short"))
             return Short.parseShort(data);
-        if (filed.getType().equals(java.lang.Byte.class)
+        if (filed.getType().equals(Byte.class)
                 || filed.getType().toString().trim().equals("byte"))
             return Byte.parseByte(data);
-        if (filed.getType().equals(java.lang.Character.class)
+        if (filed.getType().equals(Character.class)
                 || filed.getType().toString().trim().equals("char"))
             return Integer.parseInt(data);
-        if (filed.getType().equals(java.lang.Boolean.class)
+        if (filed.getType().equals(Boolean.class)
                 || filed.getType().toString().trim().equals("boolean"))
             return Integer.parseInt(data);
-        else if (filed.getType().equals(java.util.Date.class)) {
+        else if (filed.getType().equals(Date.class)) {
             String realValue = getRealValue(data, 14);
             SimpleDateFormat formatSecond = new SimpleDateFormat("yyyyMMddhhmmss".substring(0, realValue.length()));
             Date parse = formatSecond.parse(realValue);
@@ -385,33 +385,33 @@ public class Util {
     }
 
     public static String convernData(Field filed, Object data) throws ParseException {
-        if (filed.getType().equals(java.lang.String.class)) {
+        if (filed.getType().equals(String.class)) {
             return data.toString();
-        } else if (filed.getType().equals(java.lang.Integer.class)
+        } else if (filed.getType().equals(Integer.class)
                 || filed.getType().toString().trim().equals("int")) {
             return String.valueOf(data);
-        } else if (filed.getType().equals(java.lang.Long.class)
+        } else if (filed.getType().equals(Long.class)
                 || filed.getType().toString().trim().equals("long"))
             return String.valueOf(data);
-        else if (filed.getType().equals(java.lang.Double.class)
+        else if (filed.getType().equals(Double.class)
                 || filed.getType().toString().trim().equals("double"))
             return String.valueOf(data);
-        else if (filed.getType().equals(java.lang.Float.class)
+        else if (filed.getType().equals(Float.class)
                 || filed.getType().toString().trim().equals("float"))
             return String.valueOf(data);
-        if (filed.getType().equals(java.lang.Short.class)
+        if (filed.getType().equals(Short.class)
                 || filed.getType().toString().trim().equals("short"))
             return String.valueOf(data);
-        if (filed.getType().equals(java.lang.Byte.class)
+        if (filed.getType().equals(Byte.class)
                 || filed.getType().toString().trim().equals("byte"))
             return String.valueOf(data);
-        if (filed.getType().equals(java.lang.Character.class)
+        if (filed.getType().equals(Character.class)
                 || filed.getType().toString().trim().equals("char"))
             return String.valueOf(data);
-        if (filed.getType().equals(java.lang.Boolean.class)
+        if (filed.getType().equals(Boolean.class)
                 || filed.getType().toString().trim().equals("boolean"))
             return String.valueOf(data);
-        else if (filed.getType().equals(java.util.Date.class)) {
+        else if (filed.getType().equals(Date.class)) {
             SimpleDateFormat formatSecond = new SimpleDateFormat("yyyyMMddhhmmss");
             return formatSecond.format(data);
         } else if (filed.getType().equals(java.sql.Date.class)) {
@@ -423,34 +423,34 @@ public class Util {
 
     public static void setData(Field filed, Object data, Object obj) throws Exception {
         filed.setAccessible(true);
-        if (filed.getType().equals(java.lang.Integer.class)
+        if (filed.getType().equals(Integer.class)
                 || filed.getType().getSimpleName().trim().equals("int")) {
             filed.set(obj, Integer.parseInt(String.valueOf(data)));
             ;
-        } else if (filed.getType().equals(java.lang.Long.class)
+        } else if (filed.getType().equals(Long.class)
                 || filed.getType().getSimpleName().trim().equals("long"))
             filed.set(obj, Long.parseLong(String.valueOf(data)));
-        else if (filed.getType().equals(java.lang.Double.class)
+        else if (filed.getType().equals(Double.class)
                 || filed.getType().getSimpleName().trim().equals("double"))
             filed.set(obj, Double.parseDouble(String.valueOf(data)));
-        else if (filed.getType().equals(java.lang.Float.class)
+        else if (filed.getType().equals(Float.class)
                 || filed.getType().getSimpleName().trim().equals("float"))
             filed.set(obj, Float.parseFloat(String.valueOf(data)));
-        else if (filed.getType().equals(java.lang.Short.class)
+        else if (filed.getType().equals(Short.class)
                 || filed.getType().getSimpleName().trim().equals("short"))
             filed.set(obj, Short.parseShort(String.valueOf(data)));
-        else if (filed.getType().equals(java.lang.Byte.class)
+        else if (filed.getType().equals(Byte.class)
                 || filed.getType().getSimpleName().trim().equals("byte"))
             filed.set(obj, Byte.parseByte(String.valueOf(data)));
-        else if (filed.getType().equals(java.lang.Character.class)
+        else if (filed.getType().equals(Character.class)
                 || filed.getType().getSimpleName().trim().equals("char"))
             filed.set(obj, Integer.parseInt(String.valueOf(data)));
-        else if (filed.getType().equals(java.lang.Boolean.class)
+        else if (filed.getType().equals(Boolean.class)
                 || filed.getType().getSimpleName().trim().equals("boolean"))
             filed.set(obj, Integer.parseInt(String.valueOf(data)));
-        else if (filed.getType().equals(java.util.Date.class))
+        else if (filed.getType().equals(Date.class))
             filed.set(obj, (Date) data);
-        else if (filed.getType().equals(java.lang.String.class))
+        else if (filed.getType().equals(String.class))
             filed.set(obj, String.valueOf(data));
     }
 
