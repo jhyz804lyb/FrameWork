@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+	<tlibversion>1.2</tlibversion>
+	<jspversion>1.1</jspversion>
+	<shortname>wh</shortname>
+	<uri>wehua-taglib</uri>
+	<tag>
+		<name>UploadImgTag</name>
+		<tagclass>com.axp.taglib.UploadImgTag</tagclass>
+		<attribute>
+		<!--截屏宽度  -->
+			<name>corpWidth</name>
+		</attribute>
+		<attribute>
+		<!-- 截屏高度 -->
+			<name>corpHeight</name>
+		</attribute>
+		<attribute>
+		<!-- input名字 -->
+			<name>name</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+		<!-- id -->
+			<name>relatedIds</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+		<!-- id -->
+			<name>tableName</name>
+		</attribute>
+		<attribute>
+		<!-- amount最多提交数量-->
+			<name>amount</name>
+		</attribute>
+	</tag>
+	
+	<!-- 下拉标签 -->
+	<tag>
+		<name>selectTag</name>
+		<tagclass>com.axp.taglib.SelectTag</tagclass>
+		<attribute>
+			<name>parentId</name>
+			<rtexprvalue>true</rtexprvalue>
+			
+		</attribute>
+		<attribute>
+			<name>defalutValue</name>
+		</attribute>
+		<attribute>
+			<name>parentIdName</name>
+		</attribute>
+		<attribute>
+			<name>parentValue</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+		<!-- input名字 -->
+			<name>name</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<name>tableName</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<name>key</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<name>where</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>order</name>
+		</attribute>
+		<attribute>
+			<name>optionValue</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>showProperty</name>
+			<required>true</required>
+		</attribute>
+		<!-- 默认值 -->
+		<attribute>
+			<name>defaultOptionText</name>
+		</attribute>
+		<attribute>
+			<name>style</name>
+		</attribute>
+		<attribute>
+			<name>size</name>
+		</attribute>
+		<attribute>
+			<name>onChange</name>
+		</attribute>
+		<attribute>
+			<name>id</name>
+		</attribute>
+	</tag>
+	<tag>
+		<name>VIPMallCentTag</name>
+		<tagclass>com.axp.taglib.VIPMallCentTag</tagclass>
+		<attribute>
+		<!-- 类型 -->
+			<name>type</name>
+			<required>true</required>
+		</attribute>
+	</tag>
+	<!-- 批量上传 -->
+	<tag>
+		<name>UploadUtil</name>
+		<tagclass>com.axp.util.UploadUtil</tagclass>
+		<attribute>
+			<name>fileDirName</name><!-- 上传文件夹,数据对象名 -->
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<name>submitName</name><!--图片表单名 -->
+		</attribute>
+		<attribute>
+			<name>relatedClass</name><!--表 -->
+		</attribute>
+		<attribute>
+			<name>relatedId</name><!--表id -->
+		</attribute>
+		<attribute>
+			<name>amount</name><!-- 最多上传数量-->
+		</attribute>
+		<attribute>
+			<name>thumbW</name><!-- 预览宽度-->
+		</attribute>
+		<attribute>
+			<name>thumbH</name><!-- 预览-->
+		</attribute>
+		<attribute>
+			<name>targetExt</name><!-- 保存格式限制-->
+		</attribute>
+		<attribute>
+			<name>relatedChar</name><!-- 回显资源json-->
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+</taglib>
+
