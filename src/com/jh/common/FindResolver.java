@@ -34,7 +34,7 @@ public class FindResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter,
             ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) throws Exception {
-		Object result =webRequest.getAttribute(Find.class.getName(), WebRequest.SCOPE_REQUEST);
+		Object result =webRequest.getAttribute(Cost.FRAME_PARAM, WebRequest.SCOPE_REQUEST);
         result =result==null?webRequest.getAttribute(Add.class.getName(), WebRequest.SCOPE_REQUEST):result;
         return result; 
     }

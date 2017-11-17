@@ -2,6 +2,7 @@ package com.jh.action;
 
 import com.Native.NativeInteface;
 import com.jh.Interceptor.*;
+import com.jh.common.Cost;
 import com.jh.entity.*;
 import com.jh.utils.*;
 import org.springframework.stereotype.Controller;
@@ -122,10 +123,23 @@ public class UserAction
     }
 
     @RequestMapping(value = "excelFile")
-    @ExportExcel(titleList = {"比赛名称","比赛时间","状态","主队","客队","结果"}
-            ,fieldList = {"matchName","matchTime","state","homeTeam","guestTeam","result"},fileName = "框架导出测试",cellWidth = {5,5,5,5,5,5})
+    @ExportExcel(titleList = {"比赛名称", "比赛时间", "状态", "主队", "客队", "结果"}
+            , fieldList = {"matchName", "matchTime", "state", "homeTeam", "guestTeam",
+            "result"}, fileName = "框架导出测试", cellWidth = {5, 5, 5, 5, 5, 5})
     public List<Match> exportFile(@Find List<Match> matchs)
     {
         return matchs;
+    }
+
+    @RequestMapping(value = "/login")
+    public String userLogin(@Find User user,HttpServletRequest request)
+    {
+        if (user == null)
+        {
+            request.setAttribute("msg","用户名或密码不正确");
+            return "/Manage/Login";
+        }
+        request.getSession().setAttribute(Cost.LOGIN_USER,user);
+        return "/Manage/index";
     }
 }

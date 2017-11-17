@@ -676,7 +676,7 @@ public class Util
         int size = list.size();
         for (int i = 0; i < size - 1; i++)
         {
-            for (int j = 0; j < size - i; j++)
+            for (int j = 0; j < size - i-1; j++)
             {
                 Field filed1 = list.get(j);
                 Field filed2 = list.get(j + 1);

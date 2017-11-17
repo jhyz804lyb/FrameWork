@@ -54,12 +54,7 @@ public class InserValueInterceptor implements HandlerInterceptor
                     Object obj = dataBindUnit.initData(arg0, Annotation.FIND, classType, parameter);
                     if (obj != null)
                     {
-                        arg0.setAttribute(Find.class.getName(), obj);
-                    }
-                    //如果这个参数标志了导出注解
-                    if (parameter.hasParameterAnnotation(ExportExcel.class))
-                    {
-
+                        arg0.setAttribute(Cost.FRAME_PARAM, obj);
                     }
                 }
                 if (an instanceof Add)

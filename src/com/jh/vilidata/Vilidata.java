@@ -48,4 +48,17 @@ public class Vilidata
         FaceInfo result = (FaceInfo) face;
         return faceService.checkFace(result);
     }
+
+    /**
+     * 校验用户信息的的方法
+     *
+     * @param menu
+     * @return
+     */
+    public boolean checkMenuInfo(Object menu)
+    {
+        if (!(menu instanceof Menu)) return false;
+        Menu result = (Menu) menu;
+        return !(result.getLevel() != 1 && result.getParentId() == null);
+    }
 }

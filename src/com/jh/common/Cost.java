@@ -7,5 +7,7 @@ public class Cost {
 	public static final String PAGE_TGP = "base";
 	public static final String PAGE_ATTR_NAME = "base";
 	public static final String EXCEL_NO_DEFINE_FILENAME = "DEFINE_FILE_NAME";
+	public static final String LOGIN_USER="LOGIN_USER_INFO";
+	public static final String FRAME_PARAM="REQUEST_PARAM";
 
 }
