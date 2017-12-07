@@ -459,6 +459,7 @@ public class Util
 
     public static String convernData(Field filed, Object data) throws ParseException
     {
+        if(data==null) return "";
         if (filed.getType().equals(String.class))
         {
             return data.toString();
@@ -898,5 +899,24 @@ public class Util
             }
         }
         return object.getClass();
+    }
+
+    /**
+     * 找到实体类的集合中泛型的class。
+     *
+     * @param type
+     * @return
+     * @throws ClassNotFoundException
+     */
+    public static Class getCollectionClass(Type type) throws ClassNotFoundException
+    {
+        if (ParameterizedType.class.isAssignableFrom(type.getClass()))
+        {
+            for (Type result : ((ParameterizedType) type).getActualTypeArguments())
+            {
+                return Class.forName(result.toString().substring(result.toString().indexOf(" ") + 1));
+            }
+        }
+        return type.getClass();
     }
 }

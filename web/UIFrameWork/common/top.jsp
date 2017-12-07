@@ -7,8 +7,8 @@
             <h4>${LOGIN_USER_INFO.username},您好！</h4>
         </div>
         <div class="right">
-            <a>退出登录</a>
-            <b class="glyphicon glyphicon-off"></b>
+            <a style="cursor: pointer">退出登录</a>
+            <b class="glyphicon glyphicon-off" style="cursor: pointer"></b>
         </div>
     </div>
 </div>

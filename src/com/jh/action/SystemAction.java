@@ -33,4 +33,11 @@ public class SystemAction
         request.setAttribute("menus",menus);
         return "/UIFrameWork/common/menu";
     }
+
+    @RequestMapping("menuView")
+    public String menuView(@Find List<Menu> menus,HttpServletRequest request)
+    {
+        request.setAttribute("menus",menus);
+        return "/Manage/muneCrud";
+    }
 }

@@ -69,4 +69,12 @@
         <filter-name>SpringOpenSessionInViewFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <jsp-config>
+      <taglib>
+          <taglib-uri>mytaglib</taglib-uri>
+           <taglib-location>/WEB-INF/LT.tld</taglib-location>
+       </taglib>
+    </jsp-config>
+
 </web-app>

@@ -16,15 +16,18 @@ public class Menu extends EBase
     @Column(name = "menuId")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @ShowField
     private Integer menuId;
 
     @Column(name = "parentId")
     private Integer parentId;
 
     @Column(name = "menuName")
+    @ShowField
     private String menuName;
 
     @Column(name = "url")
+    @ShowField
     private String url;
 
     @Column(name = "level")
@@ -34,6 +37,7 @@ public class Menu extends EBase
 
     @Column(name = "orderId")
     @OrderByField(orderId = 1)
+    @ShowField
     private Integer orderId;
     public Menu()
     {
