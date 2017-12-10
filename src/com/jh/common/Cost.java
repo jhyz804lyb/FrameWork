@@ -9,5 +9,14 @@ public class Cost {
 	public static final String EXCEL_NO_DEFINE_FILENAME = "DEFINE_FILE_NAME";
 	public static final String LOGIN_USER="LOGIN_USER_INFO";
 	public static final String FRAME_PARAM="REQUEST_PARAM";
+	/**
+	 * 请求bean的类型
+	 */
+	public static final String BEAN_TYPE = "BEAN_TYPE";
+
+	/**
+	 * 请求bean的类型
+	 */
+	public static final String PAGE_INFO="PAGE_INFO";
 
 }

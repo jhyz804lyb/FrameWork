@@ -58,11 +58,10 @@ public class UserAction
     }
 
     @RequestMapping(value = "findMatchs")
-    @Json
     @Page
-    public List<Match> findMatch(@Find List<Match> matchs)
+    public String findMatch(@Find List<Match> matchs)
     {
-        return matchs;
+        return "/Manage/ListTest";
     }
 
     @RequestMapping(value = "add")

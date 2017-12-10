@@ -1,5 +1,8 @@
 package com.jh.entity;
 
+import com.jh.Interceptor.ListField;
+import com.jh.Interceptor.ShowField;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,24 +19,30 @@ public class Match implements Serializable{
 	private static final long serialVersionUID = 1L;
 	//����  
 	@Column(name="match_Name")
+	@ListField(showName = "赛事",orderId = 0)
 	private String matchName;
 	
 	@Column(name="match_Time")
+	@ListField(showName = "比赛时间",orderId = 5)
 	private Date matchTime;
 	
 	@Column(name="match_state")
+	@ListField(showName = "比赛状态",orderId = 6)
 	private String state;
 	
 	@Column(name="home_Team")
+	@ListField(showName = "主队名称",orderId = 1)
 	private String homeTeam;
 	
-	@Column(name="match_result")
+	@Column(name="result")
 	private String result;
 	
 	@Column(name="guest_Team")
+	@ListField(showName = "客队名称",orderId = 2)
 	private String guestTeam;
 	
 	@Column(name="match_centre")
+	@ListField(showName = "赛果",orderId = 3)
 	private String centre;
 	
 	@Column(name="home_Scpre")

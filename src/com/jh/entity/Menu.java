@@ -11,23 +11,22 @@ import javax.persistence.*;
 @Entity(name = "menu")
 @Table(name = "MENU")
 @Verify(classPath = "com.jh.vilidata.Vilidata", MethodName = "checkMenuInfo")
-public class Menu extends EBase
-{
+public class Menu extends EBase {
     @Column(name = "menuId")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @ShowField
+    @ListField(showName = "菜单主键")
     private Integer menuId;
 
     @Column(name = "parentId")
     private Integer parentId;
 
     @Column(name = "menuName")
-    @ShowField
+    @ListField(showName = "菜单名称")
     private String menuName;
 
     @Column(name = "url")
-    @ShowField
+    @ListField(showName = "请求地址")
     private String url;
 
     @Column(name = "level")
@@ -37,69 +36,57 @@ public class Menu extends EBase
 
     @Column(name = "orderId")
     @OrderByField(orderId = 1)
-    @ShowField
+    @ListField(showName = "序号")
     private Integer orderId;
-    public Menu()
-    {
+
+    public Menu() {
     }
 
-    public Integer getMenuId()
-    {
+    public Integer getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Integer menuId)
-    {
+    public void setMenuId(Integer menuId) {
         this.menuId = menuId;
     }
 
-    public Integer getParentId()
-    {
+    public Integer getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId)
-    {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
 
-    public String getMenuName()
-    {
+    public String getMenuName() {
         return menuName;
     }
 
-    public void setMenuName(String menuName)
-    {
+    public void setMenuName(String menuName) {
         this.menuName = menuName;
     }
 
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url)
-    {
+    public void setUrl(String url) {
         this.url = url;
     }
 
-    public Integer getLevel()
-    {
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(Integer level)
-    {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 
-    public Integer getOrderId()
-    {
+    public Integer getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Integer orderId)
-    {
+    public void setOrderId(Integer orderId) {
         this.orderId = orderId;
     }
 }

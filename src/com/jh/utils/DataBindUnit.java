@@ -252,6 +252,9 @@ public class DataBindUnit
             query = session.createQuery(oql.toString())
                     .setFirstResult((pageInfo.getPageNo() - 1) * pageInfo.getPageCount())
                     .setMaxResults(pageInfo.getPageCount());
+            //处理分页的情况
+            pageInfo.setUrl(request.getRequestURI());;
+            request.setAttribute(Cost.PAGE_INFO,pageInfo);
         }
         else
         {
@@ -452,6 +455,8 @@ public class DataBindUnit
             query = session.createQuery(oql.toString())
                     .setFirstResult((pageInfo.getPageNo() - 1) * pageInfo.getPageCount())
                     .setMaxResults(pageInfo.getPageCount());
+            pageInfo.setUrl(request.getRequestURI());;
+            request.setAttribute(Cost.PAGE_INFO,pageInfo);
         }
         else
         {
@@ -647,6 +652,8 @@ public class DataBindUnit
             query = session.createQuery(oql.toString())
                     .setFirstResult((pageInfo.getPageNo() - 1) * pageInfo.getPageCount())
                     .setMaxResults(pageInfo.getPageCount());
+            pageInfo.setUrl(request.getRequestURI());;
+            request.setAttribute(Cost.PAGE_INFO,pageInfo);
         }
         else
         {
@@ -804,9 +811,10 @@ public class DataBindUnit
             //设置最大页信息，如果max 为0 对应为0
             pageInfo.setMaxPage(max != 0 ? (max % pageInfo.getPageCount() == 0 ? max / pageInfo.getPageCount() :
                     1 + (max / pageInfo.getPageCount())) : 0);
-            request.setAttribute(Cost.PAGE_ATTR_NAME, pageInfo);
             //得到转换之后的分页查询语句，由于可能会出现以后不适用hibernate 所以这里不使用 hibernate的分页
             query = session.createSQLQuery(pageIntefac.getPageListSQL(oql.toString(), pageInfo));
+            pageInfo.setUrl(request.getRequestURI());;
+            request.setAttribute(Cost.PAGE_INFO,pageInfo);
         }
         else
         {

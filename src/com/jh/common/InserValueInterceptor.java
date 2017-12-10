@@ -52,6 +52,7 @@ public class InserValueInterceptor implements HandlerInterceptor
                     //得到具体的实体class
                     Class classType = Util.getClassByMethodParameter(parameter);
                     Object obj = dataBindUnit.initData(arg0, Annotation.FIND, classType, parameter);
+                    arg0.setAttribute(Cost.BEAN_TYPE, classType);
                     if (obj != null)
                     {
                         arg0.setAttribute(Cost.FRAME_PARAM, obj);

@@ -13,6 +13,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.jh.common.Cost;
@@ -28,21 +29,21 @@ public class InitDataTask implements InitTask {
 	MatchService matchService;
 
 	@Override
-	// @Scheduled(cron="0 0 0 * * ? ") //ÿ��24�㴥��
-	// @Scheduled(cron ="0/5 * *  * * ? " )// ��ÿ������2�㵽2:55�ڼ������6�㵽6:55�ڼ��ÿ5���Ӵ���
+	// @Scheduled(cron="0 0 0 * * ? ") //???24????
+	// @Scheduled(cron ="0/5 * *  * * ? " )// ?????????2??2:55????????6??6:55?????5???????
 	public void initData() throws ParseException, IOException {
-		System.out.println("��ʱ����ʼִ��------------------");
+		System.out.println("???????????------------------");
 		SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
 		if (Cost.lastInitTime != null
 				&& Cost.lastInitTime.equals(sd.format(new Date())))
 			return;
 		Cost.lastInitTime = sd.format(new Date());
-		System.out.println("��ʼͬ������");
+		System.out.println("??????????");
 		Long today = sd.parse(sd.format(new Date())).getTime();
 		String data = "20150224";
 		Date old = sd.parse(data);
 		Long time = old.getTime() + (24 * 60 * 60 * 1000);
-		// ͬ������
+		// ???????
 		for (int i = 0; true; i++) {
 
 			if (time >= today)
@@ -70,7 +71,7 @@ public class InitDataTask implements InitTask {
 		}
 	}
 
-	// @Scheduled(cron ="0/5 * *  * * ? " )
+	//@Scheduled(cron ="0/5 * *  * * ? " )
 	public void initTodayData() throws Exception {
 		String sql = "select * from match_all order by match_Time desc limit 1,1";
 		List<Match> m = matchService.getListBySQL(sql, Match.class, null, true);
@@ -171,10 +172,10 @@ public class InitDataTask implements InitTask {
 		counts = new ArrayList<MatchCount>();
 		Elements tables = table.getElementsByTag("table");
 		for (Element e : tables) {
-			if (e.text().indexOf("����ͳ��") != -1) {
+			if (e.text().indexOf("???????") != -1) {
 				Elements trs = e.getElementsByTag("tr");
 				for (Element tr : trs) {
-					if (tr.text().indexOf("����ͳ��") != -1)
+					if (tr.text().indexOf("???????") != -1)
 						continue;
 					Elements tds = tr.getElementsByTag("td");
 					MatchCount entity = new MatchCount();

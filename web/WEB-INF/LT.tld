@@ -6,7 +6,7 @@
     <description>JSTL 1.1 core library</description>
     <display-name>JSTL core</display-name>
     <tlib-version>1.1</tlib-version>
-    <short-name>my</short-name>
+    <short-name>BT</short-name>
     <uri>mytaglib</uri>
 
     <validator>
@@ -43,6 +43,116 @@
             <!--td 还是tr  -->
             <name>baseCell</name>
             <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+    </tag>
+
+    <tag>
+        <description>
+            加载list
+        </description>
+        <name>ShowList</name>
+        <tag-class>com.jh.common.tag.ListTag</tag-class>
+        <body-content>empty</body-content>
+
+        <attribute>
+            <!--数据  -->
+            <name>data</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.util.Collection</type>
+        </attribute>
+    </tag>
+
+    <tag>
+        <description>
+            加载list
+        </description>
+        <name>LoadList</name>
+        <tag-class>com.jh.common.tag.ForeachList</tag-class>
+        <body-content>empty</body-content>
+        <!--数据  -->
+        <attribute>
+            <name>data</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.util.Collection</type>
+        </attribute>
+        <!--展示的集合字段列表 -->
+        <attribute>
+            <name>fields</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <!--展示的表头描述 -->
+        <attribute>
+            <name>titleNames</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <!--文字对其方式 -->
+        <attribute>
+            <name>textAlign</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <!--表格样式这个不为空时会覆盖默认的样式 -->
+        <attribute>
+            <name>tableStyle</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <!--表格样式已追加的方式 -->
+        <attribute>
+            <name>addStyle</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <!--没有数据时的提示信息 -->
+        <attribute>
+            <name>msg</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <!--第一列要显示上面数据 -->
+        <attribute>
+            <name>btnType</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <!--遍历的bean的类型 -->
+        <attribute>
+            <name>beanType</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Class</type>
+        </attribute>
+    </tag>
+
+    <tag>
+        <description>
+            加载分页信息
+        </description>
+        <name>PageInfo</name>
+        <tag-class>com.jh.common.tag.PageTag</tag-class>
+        <body-content>empty</body-content>
+
+        <attribute>
+            <!--数据  -->
+            <name>data</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.jh.base.PageInfo</type>
+        </attribute>
+
+        <attribute>
+            <!--请求类型  -->
+            <name>requestType</name>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.jh.common.enmu.RequestType</type>
+        </attribute>
+
+        <attribute>
+            <!--表单ID  -->
+            <name>formId</name>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
         </attribute>
